@@ -19,6 +19,10 @@ public class User {
     private String email;
     private String phone;
 
+    @ManyToOne
+    @JoinColumn(name = "clazz_id")
+    private Clazz clazz;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CourseSelection> courseSelections;
 }
