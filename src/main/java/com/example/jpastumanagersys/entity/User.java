@@ -23,6 +23,6 @@ public class User {
     @JoinColumn(name = "clazz_id")
     private Clazz studentClazz;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<CourseSelection> courseSelections;
 }
