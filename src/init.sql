@@ -1,8 +1,24 @@
--- 创建数据库，如果不存在则创建
-CREATE DATABASE IF NOT EXISTS jpa_stu_manager_sys;
+-- 检查数据库是否存在，如果不存在则创建数据库，将 your_database_name 替换为实际的数据库名
+CREATE DATABASE IF NOT EXISTS your_database_name;
 
--- 使用创建好的数据库
-USE jpa_stu_manager_sys;
+-- 选择要操作的数据库
+USE your_database_name;
+
+-- 删除表时按照逆依赖顺序，避免外键约束错误
+DROP TABLE IF EXISTS attendance;
+DROP TABLE IF EXISTS course_selection;
+DROP TABLE IF EXISTS scores;
+DROP TABLE IF EXISTS leave_applications;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS Clazz;
+
+-- 创建 Clazz 表
+CREATE TABLE IF NOT EXISTS Clazz (
+                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                     className VARCHAR(255),
+                                     classCode VARCHAR(255)
+);
 
 -- 创建 users 表
 CREATE TABLE IF NOT EXISTS users (
@@ -11,7 +27,9 @@ CREATE TABLE IF NOT EXISTS users (
                                      password VARCHAR(255) NOT NULL,
                                      role VARCHAR(255) NOT NULL,
                                      email VARCHAR(255),
-                                     phone VARCHAR(255)
+                                     phone VARCHAR(255),
+                                     clazz_id BIGINT, -- 新增字段，关联 Clazz 表
+                                     FOREIGN KEY (clazz_id) REFERENCES Clazz(id)
 );
 
 -- 创建 courses 表
@@ -51,58 +69,20 @@ CREATE TABLE IF NOT EXISTS attendance (
 -- 创建 scores 表
 CREATE TABLE IF NOT EXISTS scores (
                                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                      student_id BIGINT NOT NULL,
-                                      course_id BIGINT NOT NULL,
+                                      student_id BIGINT,
+                                      course_id BIGINT,
                                       score DOUBLE,
                                       FOREIGN KEY (student_id) REFERENCES users(id),
                                       FOREIGN KEY (course_id) REFERENCES courses(id)
 );
 
--- 创建 Clazz 表
-CREATE TABLE IF NOT EXISTS Clazz (
-                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                     className VARCHAR(255),
-                                     classCode VARCHAR(255)
-);
-
 -- 创建 leave_applications 表
 CREATE TABLE IF NOT EXISTS leave_applications (
                                                   id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                                  student_id BIGINT NOT NULL,
-                                                  startDate DATETIME,
-                                                  endDate DATETIME,
-                                                  reason VARCHAR(255),
+                                                  student_id BIGINT,
+                                                  startDate DATE,
+                                                  endDate DATE,
+                                                  reason TEXT,
                                                   approved BOOLEAN,
                                                   FOREIGN KEY (student_id) REFERENCES users(id)
 );
-
--- 插入 users 表的初始化数据
-INSERT INTO users (username, password, role, email, phone) VALUES
-                                                               ('admin', 'admin123', 'ADMIN', 'admin@example.com', '1234567890'),
-                                                               ('teacher1', 'teacher123', 'TEACHER', 'teacher1@example.com', '0987654321'),
-                                                               ('student1', 'student123', 'STUDENT', 'student1@example.com', '1122334455');
-
--- 插入 courses 表的初始化数据
-INSERT INTO courses (courseName, courseCode, maxStudents, currentStudents, courseTime, teacher_id) VALUES
-                                                                                                       ('Mathematics', 'MATH101', 30, 0, 'Monday 9:00 AM', 2),
-                                                                                                       ('Physics', 'PHYS101', 25, 0, 'Wednesday 10:30 AM', 2);
-
--- 插入 course_selection 表的初始化数据
-INSERT INTO course_selection (student_id, course_id, selectionDate, score) VALUES
-    (3, 1, '2024-01-01 10:00:00', NULL);
-
--- 插入 attendance 表的初始化数据
-INSERT INTO attendance (student_id, course_id, attendanceDate, isPresent) VALUES
-    (3, 1, '2024-01-02 09:00:00', true);
-
--- 插入 scores 表的初始化数据
-INSERT INTO scores (student_id, course_id, score) VALUES
-    (3, 1, 85.0);
-
--- 插入 Clazz 表的初始化数据
-INSERT INTO Clazz (className, classCode) VALUES
-    ('Class A', 'CLA01');
-
--- 插入 leave_applications 表的初始化数据
-INSERT INTO leave_applications (student_id, startDate, endDate, reason, approved) VALUES
-    (3, '2024-01-10 00:00:00', '2024-01-12 00:00:00', 'Sick leave', false);
