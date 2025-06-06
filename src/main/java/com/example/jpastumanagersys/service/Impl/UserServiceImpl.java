@@ -3,6 +3,8 @@ package com.example.jpastumanagersys.service.Impl;
 import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,5 +72,23 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername()).password(user.getPassword()).roles(user.getRole()).build();
+    }
+
+    @Override
+    public Page<User> getStudentsByCondition(String name, Long classId, Pageable pageable) {
+        if (name != null && classId != null) {
+            return userRepository.findByUsernameContainingAndClazz_Id(name, classId, pageable);
+        } else if (name != null) {
+            return userRepository.findByUsernameContaining(name, pageable);
+        } else if (classId != null) {
+            return userRepository.findByClazz_Id(classId, pageable);
+        } else {
+            return userRepository.findAll(pageable);
+        }
+    }
+
+    @Override
+    public void deleteStudentsByIds(List<Long> ids) {
+        userRepository.deleteAllById(ids);
     }
 }

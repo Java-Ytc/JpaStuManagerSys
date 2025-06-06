@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Admin Student List</title>
+</head>
+<body>
+<h1>Admin Student List</h1>
+<form action="/admin/students" method="get">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" />
+  <label for="classId">Class ID:</label>
+  <input type="number" id="classId" name="classId" />
+  <button type="submit">Search</button>
+</form>
+<form action="/admin/students/delete" method="post">
+  <table>
+    <thead>
+    <tr>
+      <th><input type="checkbox" id="selectAll" /></th>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Class</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${students}">
+      <td><input type="checkbox" name="ids" th:value="${student.id}" /></td>
+      <td th:text="${student.id}"></td>
+      <td th:text="${student.username}"></td>
+      <td th:text="${student.email}"></td>
+      <td th:text="${student.phone}"></td>
+      <td th:text="${student.clazz.className}"></td>
+      <td>
+        <a th:href="@{/admin/students/edit/{id}(id=${student.id})}">Edit</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <button type="submit">Delete Selected</button>
+</form>
+<div>
+  <a th:href="@{/admin/students(page=${currentPage - 1})}" th:if="${currentPage > 0}">Previous</a>
+  <a th:href="@{/admin/students(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">Next</a>
+</div>
+<script>
+  document.getElementById('selectAll').addEventListener('change', function() {
+    var checkboxes = document.querySelectorAll('input[name="ids"]');
+    checkboxes.forEach(function(checkbox) {
+      checkbox.checked = this.checked;
+    }, this);
+  });
+</script>
+</body>
+</html>
