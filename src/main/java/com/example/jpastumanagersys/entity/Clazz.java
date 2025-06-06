@@ -16,6 +16,6 @@ public class Clazz {
     private String className;
     private String classCode;
 
-    @OneToMany(mappedBy = "studentClazz", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "clazz", cascade = CascadeType.ALL)
     private List<User> students;
 }

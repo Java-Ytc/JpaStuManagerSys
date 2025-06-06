@@ -22,5 +22,6 @@ public class CourseSelection {
     private Course course;
 
     private Date selectionDate;
+
     private Double score;
 }
