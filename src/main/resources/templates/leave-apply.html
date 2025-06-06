@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Apply for Leave</title>
+</head>
+<body>
+<h1>Apply for Leave</h1>
+<form action="#" th:action="@{/leave/save}" th:object="${leaveApplication}" th:method="post">
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" th:field="*{startDate}" required><br><br>
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" th:field="*{endDate}" required><br><br>
+    <label for="reason">Reason:</label>
+    <textarea id="reason" th:field="*{reason}" required></textarea><br><br>
+    <input type="submit" value="Apply">
+</form>
+</body>
+</html>

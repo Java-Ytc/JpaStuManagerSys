@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Students</title>
+</head>
+<body>
+<h1>Course Students</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Student Name</th>
+        <th>Score</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="selection : ${selections}">
+        <td th:text="${selection.student.username}"></td>
+        <td th:text="${selection.score}"></td>
+        <td>
+            <a th:href="@{/score/update/{selectionId}(selectionId=${selection.id}, courseId=${courseId})}">Update Score</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

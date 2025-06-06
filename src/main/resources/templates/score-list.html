@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Score List</title>
+</head>
+<body>
+<h1>Score List for Course <span th:text="${courseId}"></span></h1>
+<table>
+    <thead>
+    <tr>
+        <th>Student Name</th>
+        <th>Score</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="selection : ${selections}">
+        <td th:text="${selection.student.username}"></td>
+        <td th:text="${selection.score}"></td>
+        <td>
+            <form action="#" th:action="@{/score/update/{selectionId}(selectionId=${selection.id}, courseId=${courseId})}" th:method="post">
+                <input type="number" name="score" step="0.01" required>
+                <input type="submit" value="Update">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <a th:href="@{/score/list/{courseId}(courseId=${courseId}, page=${currentPage - 1})}" th:if="${currentPage > 0}">Previous</a>
+    <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>
+    <a th:href="@{/score/list/{courseId}(courseId=${courseId}, page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">Next</a>
+</div>
+</body>
+</html>

@@ -26,7 +26,7 @@ public class SecurityConfig {
     }
 
     private void configureAuthorizeRequests(org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
-        authorize.requestMatchers("/auth/login", "/register", "/captcha").permitAll().requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/teacher/**").hasRole("TEACHER").requestMatchers("/student/**").hasRole("STUDENT").anyRequest().authenticated();
+        authorize.requestMatchers("/auth/login", "/auth/register", "/captcha").permitAll().requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/teacher/**").hasRole("TEACHER").requestMatchers("/student/**").hasRole("STUDENT").anyRequest().authenticated();
     }
 
     private void configureFormLogin(org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer<HttpSecurity> form) {

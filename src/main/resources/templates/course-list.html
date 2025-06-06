@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course List</title>
+</head>
+<body>
+<h1>Course List</h1>
+<a href="#" th:href="@{/course/add}">Add Course</a>
+<table>
+    <thead>
+    <tr>
+        <th>Course Name</th>
+        <th>Course Code</th>
+        <th>Max Students</th>
+        <th>Current Students</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${courses}">
+        <td th:text="${course.courseName}"></td>
+        <td th:text="${course.courseCode}"></td>
+        <td th:text="${course.maxStudents}"></td>
+        <td th:text="${course.currentStudents}"></td>
+        <td>
+            <a th:href="@{/course/edit/{id}(id=${course.id})}">Edit</a>
+            <a th:href="@{/course/delete/{id}(id=${course.id})}">Delete</a>
+            <a th:href="@{/selection/add/{courseId}(courseId=${course.id})}">Select</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <a th:href="@{/course/list(page=${currentPage - 1})}" th:if="${currentPage > 0}">Previous</a>
+    <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span>
+    <a th:href="@{/course/list(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">Next</a>
+</div>
+</body>
+</html>
