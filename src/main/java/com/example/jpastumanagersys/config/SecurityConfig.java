@@ -26,11 +26,11 @@ public class SecurityConfig {
     }
 
     private void configureAuthorizeRequests(org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
-        authorize.requestMatchers("/login", "/register", "/captcha").permitAll().requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/teacher/**").hasRole("TEACHER").requestMatchers("/student/**").hasRole("STUDENT").anyRequest().authenticated();
+        authorize.requestMatchers("/auth/login", "/register", "/captcha").permitAll().requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/teacher/**").hasRole("TEACHER").requestMatchers("/student/**").hasRole("STUDENT").anyRequest().authenticated();
     }
 
     private void configureFormLogin(org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer<HttpSecurity> form) {
-        form.loginPage("/login").defaultSuccessUrl("/home").permitAll();
+        form.loginPage("/auth/login").defaultSuccessUrl("/home").permitAll();
     }
 
     private void configureLogout(org.springframework.security.config.annotation.web.configurers.LogoutConfigurer<HttpSecurity> logout) {
