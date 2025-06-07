@@ -81,6 +81,7 @@ public class AdminController {
     // 更新学生信息
     @PostMapping("/students/update")
     public String updateStudent(@ModelAttribute User user) {
+        System.out.println("接受到的userCode：" + user.getUserCode());
         userService.updateUser(user);
         return "redirect:/admin/students";
     }

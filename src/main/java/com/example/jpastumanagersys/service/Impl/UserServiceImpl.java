@@ -44,7 +44,12 @@ public class UserServiceImpl implements UserService {
         }
         existingUser.setEmail(user.getEmail());
         existingUser.setPhone(user.getPhone());
-        existingUser.setRole(user.getRole());
+
+        // 检查新角色是否为空，若为空则使用原角色
+        if (user.getRole() != null && !user.getRole().isEmpty()) {
+            existingUser.setRole(user.getRole());
+        }
+
         existingUser.setClazz(user.getClazz());
 
         return userRepository.save(existingUser);
@@ -59,7 +64,7 @@ public class UserServiceImpl implements UserService {
     // 根据用户编号获取用户
     @Override
     public User getUserByUserCode(String userCode) {
-        return userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("没有找到用户"));
+        return userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("无法根据编号获取用户"));
     }
 
     // 获取所有用户
@@ -71,7 +76,7 @@ public class UserServiceImpl implements UserService {
     // 用户更改密码
     @Override
     public User changePassword(String userCode, String oldPassword, String newPassword) {
-        User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("没有找到用户"));
+        User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("更改密码时没有找到用户"));
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new IllegalArgumentException("旧密码错误");
@@ -84,7 +89,7 @@ public class UserServiceImpl implements UserService {
     // Spring Security自带的登录验证方法，实际为通过userCode进行验证登录，而非username
     @Override
     public UserDetails loadUserByUsername(String userCode) throws UsernameNotFoundException {
-        User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new UsernameNotFoundException("登录时没有找到用户"));
 
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername()).password(user.getPassword()).roles(user.getRole()).build();
     }

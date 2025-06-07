@@ -7,6 +7,8 @@
 <body>
 <h1>管理员编辑学生表单</h1>
 <form action="#" th:action="@{/admin/students/update}" th:object="${user}" method="post">
+    <!-- 添加隐藏字段传递 userCode -->
+    <input type="hidden" th:field="*{userCode}" />
     <label for="username">用户名:</label>
     <input type="text" id="username" th:field="*{username}" />
     <br />
@@ -24,6 +26,8 @@
         <!-- 这里需要根据实际情况动态加载班级列表 -->
     </select>
     <br />
+    <!-- 添加隐藏字段传递角色信息 -->
+    <input type="hidden" th:field="*{role}" />
     <button type="submit">保存</button>
 </form>
 </body>
