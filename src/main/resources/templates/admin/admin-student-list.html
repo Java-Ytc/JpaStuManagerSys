@@ -1,57 +1,72 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
-  <title>Admin Student List</title>
+    <meta charset="UTF-8">
+    <title>管理员学生列表</title>
 </head>
 <body>
-<h1>Admin Student List</h1>
+<h1>管理员学生列表</h1>
 <form action="/admin/students" method="get">
-  <label for="name">Name:</label>
-  <input type="text" id="name" name="name" />
-  <label for="classId">Class ID:</label>
-  <input type="number" id="classId" name="classId" />
-  <button type="submit">Search</button>
+    <label for="name">姓名:</label>
+    <input type="text" id="name" name="name"/>
+    <label for="classId">班级 ID:</label>
+    <input type="number" id="classId" name="classId"/>
+    <button type="submit">搜索</button>
 </form>
 <form action="/admin/students/delete" method="post">
-  <table>
-    <thead>
-    <tr>
-      <th><input type="checkbox" id="selectAll" /></th>
-      <th>ID</th>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Phone</th>
-      <th>Class</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="student : ${students}">
-      <td><input type="checkbox" name="ids" th:value="${student.id}" /></td>
-      <td th:text="${student.id}"></td>
-      <td th:text="${student.username}"></td>
-      <td th:text="${student.email}"></td>
-      <td th:text="${student.phone}"></td>
-      <td th:text="${student.clazz.className}"></td>
-      <td>
-        <a th:href="@{/admin/students/edit/{id}(id=${student.id})}">Edit</a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-  <button type="submit">Delete Selected</button>
+    <table>
+        <thead>
+        <tr>
+            <!-- 添加一个全选的复选框，能够选中全部的数据 -->
+            <th>
+                <label for="selectAll">全选</label>
+                <input type="checkbox" id="selectAll"/>
+            </th>
+            <th>用户编号</th>
+            <th>用户名</th>
+            <th>邮箱</th>
+            <th>电话</th>
+            <th>班级</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 检查是否有学生数据 -->
+        <tr th:if="${noStudentsMessage}">
+            <td colspan="7" th:text="${noStudentsMessage}"></td>
+        </tr>
+        <!-- 遍历学生列表，为每一个学生数据生成一行表格数据 -->
+        <tr th:each="student : ${students}">
+            <!-- 选中学生数据中的 userCode 作为删除时的参数传递到 AdminController -->
+            <td>
+                <label th:for="${'checkbox_' + student.userCode}">选择</label>
+                <input type="checkbox" id="${'checkbox_' + student.userCode}" name="userCodes" th:value="${student.userCode}"/>
+            </td>
+            <td th:text="${student.userCode}"></td>
+            <td th:text="${student.username}"></td>
+            <td th:text="${student.email}"></td>
+            <td th:text="${student.phone}"></td>
+            <td th:text="${student.clazz != null ? student.clazz.className : '无班级信息'}"></td>
+            <td>
+                <a th:href="@{/admin/students/edit/{userCode}(userCode=${student.userCode})}">编辑</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit">删除选中项</button>
 </form>
 <div>
-  <a th:href="@{/admin/students(page=${currentPage - 1})}" th:if="${currentPage > 0}">Previous</a>
-  <a th:href="@{/admin/students(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">Next</a>
+    <a th:href="@{/admin/students(page=${currentPage - 1})}" th:if="${currentPage > 0}">上一页</a>
+    <a th:href="@{/admin/students(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">下一页</a>
 </div>
 <script>
-  document.getElementById('selectAll').addEventListener('change', function() {
-    var checkboxes = document.querySelectorAll('input[name="ids"]');
-    checkboxes.forEach(function(checkbox) {
-      checkbox.checked = this.checked;
-    }, this);
-  });
+    document.getElementById('selectAll').addEventListener('change', function () {
+        // 通过 userCode 选中全部的数据
+        const checkboxes = document.querySelectorAll('input[name="userCodes"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
 </script>
 </body>
 </html>

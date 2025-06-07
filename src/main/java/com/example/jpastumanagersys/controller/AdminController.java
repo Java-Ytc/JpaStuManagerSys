@@ -31,22 +31,27 @@ public class AdminController {
 
     // 显示学生列表页面
     @GetMapping("/students")
-    public String listStudents(@RequestParam(required = false) String name,
+    public String listStudents(@RequestParam(required = false) String userCode,
+                               @RequestParam(required = false) String username,
                                @RequestParam(required = false) Long classId,
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "10") int size,
                                Model model) {
-        Page<User> studentPage = userService.getStudentsByCondition(name, classId, PageRequest.of(page, size));
+        Page<User> studentPage = userService.getStudentsByCondition(userCode, username, classId, PageRequest.of(page, size));
         model.addAttribute("students", studentPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", studentPage.getTotalPages());
+        // 检查是否有学生数据
+        if (studentPage.isEmpty()) {
+            model.addAttribute("noStudentsMessage", "No students found.");
+        }
         return "/admin/admin-student-list";
     }
 
     // 批量删除学生信息
     @PostMapping("/students/delete")
-    public String deleteStudents(@RequestParam List<Long> ids) {
-        userService.deleteStudentsByIds(ids);
+    public String deleteStudents(@RequestParam List<String> userCodes) {
+        userService.deleteStudentsByUserCodes(userCodes);
         return "redirect:/admin/students";
     }
 
@@ -54,22 +59,23 @@ public class AdminController {
     @GetMapping("/students/add")
     public String addStudentForm(Model model) {
         model.addAttribute("user", new User());
-        return "/admin/admin-student-form";
+        return "/admin/admin-student-add-form";
     }
 
     // 保存新添加的学生信息
     @PostMapping("/students/save")
     public String saveStudent(@ModelAttribute User user) {
+        user.setRole("STUDENT");
         userService.saveUser(user);
         return "redirect:/admin/students";
     }
 
     // 显示编辑学生页面
-    @GetMapping("/students/edit/{id}")
-    public String editStudentForm(@PathVariable Long id, Model model) {
-        User user = userService.getUserById(id);
+    @GetMapping("/students/edit/{userCode}")
+    public String editStudentForm(@PathVariable String userCode, Model model) {
+        User user = userService.getUserByUserCode(userCode);
         model.addAttribute("user", user);
-        return "/admin/admin-student-form";
+        return "/admin/admin-student-edit-form";
     }
 
     // 更新学生信息

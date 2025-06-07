@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>管理员仪表盘</title>
 </head>
 <body>
-<h1>Admin Dashboard</h1>
-<p>Total Students: <span th:text="${totalStudents}"></span></p>
-<p>Total Teachers: <span th:text="${totalTeachers}"></span></p>
+<h1>管理员仪表盘</h1>
+<p>学生总数: <span th:text="${totalStudents}"></span></p>
+<p>教师总数: <span th:text="${totalTeachers}"></span></p>
 <!-- 添加指向学生列表页面的链接 -->
-<a href="/admin/students">View Students</a>
+<a href="/admin/students">查看学生</a>
 <br>
 <!-- 添加指向添加学生页面的链接 -->
-<a href="/admin/students/add">Add Student</a>
+<a href="/admin/students/add">添加学生</a>
 </body>
 </html>
