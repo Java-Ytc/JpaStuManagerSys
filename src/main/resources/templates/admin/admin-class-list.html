@@ -1,3 +1,4 @@
+<!-- admin-class-list.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
@@ -40,6 +41,8 @@
       <td th:text="${clazz.students != null && !clazz.students.isEmpty() ? clazz.students.size() : '没有学生'}"></td>
       <td>
         <a th:href="@{/admin/classes/edit/{classCode}(classCode=${clazz.classCode})}">编辑</a>
+        <!-- 添加分配学生的链接 -->
+        <a th:href="@{/admin/classes/{classCode}/assign-students(classCode=${clazz.classCode})}">分配学生</a>
       </td>
     </tr>
     </tbody>

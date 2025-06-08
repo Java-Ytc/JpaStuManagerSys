@@ -37,4 +37,10 @@ public interface UserService extends UserDetailsService {
 
     // 根据条件获取教师信息
     Page<User> getTeachersByCondition(String userCode, String name, String courseCode, Pageable pageable);
+
+    // 获取未分配班级的学生
+    Page<User> getUnassignedStudents(Pageable pageable);
+
+    // 为班级批量分配学生
+    void assignStudentsToClass(String userCode, List<String> classCodes);
 }

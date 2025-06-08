@@ -308,4 +308,27 @@ public class AdminController {
         courseService.deleteByCourseCodes(courseCodes);
         return "redirect:/admin/courses";
     }
+
+    // 显示为班级分配学生的页面
+    @GetMapping("/classes/{classCode}/assign-students")
+    public String showAssignStudentsPage(@PathVariable String classCode,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         Model model) {
+        Clazz clazz = clazzService.getByClassCode(classCode);
+        Page<User> unassignedStudents = userService.getUnassignedStudents(PageRequest.of(page, size));
+        model.addAttribute("clazz", clazz);
+        model.addAttribute("unassignedStudents", unassignedStudents.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", unassignedStudents.getTotalPages());
+        return "/admin/admin-class-assign-students";
+    }
+
+    // 处理为班级批量分配学生的请求
+    @PostMapping("/classes/{classCode}/assign-students")
+    public String assignStudentsToClass(@PathVariable String classCode,
+                                        @RequestParam List<String> userCodes) {
+        userService.assignStudentsToClass(classCode, userCodes);
+        return "redirect:/admin/classes";
+    }
 }

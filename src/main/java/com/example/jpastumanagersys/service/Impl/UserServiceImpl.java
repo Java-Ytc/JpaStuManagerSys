@@ -4,7 +4,6 @@ import com.example.jpastumanagersys.entity.Clazz;
 import com.example.jpastumanagersys.entity.Course;
 import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.repo.ClazzRepo;
-import com.example.jpastumanagersys.repo.CourseRepo;
 import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.UserService;
 import jakarta.transaction.Transactional;
@@ -17,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -32,9 +32,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ClazzRepo clazzRepo;
-
-    @Autowired
-    private CourseRepo courseRepo;
 
     // 注册新用户
     @Override
@@ -230,4 +227,44 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
+    @Override
+    public Page<User> getUnassignedStudents(Pageable pageable) {
+        // 先查询出所有未分配班级的用户
+        Page<User> allUnassignedUsers = userRepository.findByClazzIsNull(pageable);
+        // 过滤出角色为 STUDENT 的用户
+        List<User> unassignedStudents = allUnassignedUsers.getContent().stream()
+                .filter(user -> "STUDENT".equals(user.getRole()))
+                .collect(Collectors.toList());
+        // 返回过滤后的结果
+        return new PageImpl<>(unassignedStudents, pageable, unassignedStudents.size());
+    }
+
+    @Override
+    @Transactional
+    public void assignStudentsToClass(String classCode, List<String> userCodes) {
+        // 1. 根据班级编号查找对应的班级
+        Clazz clazz = clazzRepo.findByClassCode(classCode).orElseThrow(() -> new IllegalArgumentException("未找到对应的班级"));
+
+        // 2. 根据学生编号列表查找对应的学生，并过滤出角色为 STUDENT 的用户
+        List<User> students = userCodes.stream()
+                .map(userCode -> userRepository.findByUserCode(userCode)
+                        .filter(user -> "STUDENT".equals(user.getRole()))
+                        .orElseThrow(() -> new IllegalArgumentException("未找到对应的学生或用户不是学生角色")))
+                .toList();
+
+        // 3. 遍历学生列表，将每个学生分配到指定班级
+        for (User student : students) {
+            student.setClazz(clazz);
+            userRepository.save(student);
+        }
+
+        // 4. 更新班级的学生列表
+        List<User> currentStudents = clazz.getStudents();
+        if (currentStudents == null) {
+            currentStudents = new ArrayList<>();
+        }
+        currentStudents.addAll(students);
+        clazz.setStudents(currentStudents);
+        clazzRepo.save(clazz);
+    }
 }
