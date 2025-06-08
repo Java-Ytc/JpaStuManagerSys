@@ -20,8 +20,11 @@ public interface UserService extends UserDetailsService {
     // 根据用户编号获取用户
     User getByUserCode(String userCode);
 
-    // 根据用户编号批量删除用户
-    void deleteByUserCodes(List<String> userCodes);
+    // 管理员根据学生编号，批量删除
+    void deleteStudentsByUserCodes(List<String> userCodes);
+
+    // 管理员根据老师编号，批量删除
+    void deleteTeachersByUserCodes(List<String> userCodes);
 
     // 管理员更新学生信息
     User updateStudent(User user);

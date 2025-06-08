@@ -78,7 +78,7 @@ public class AdminController {
     // 批量删除学生信息
     @PostMapping("/students/delete")
     public String deleteStudents(@RequestParam List<String> userCodes) {
-        userService.deleteByUserCodes(userCodes);
+        userService.deleteStudentsByUserCodes(userCodes);
         return "redirect:/admin/students";
     }
 
@@ -171,7 +171,7 @@ public class AdminController {
     // 批量删除教师信息
     @PostMapping("/teachers/delete")
     public String deleteTeachers(@RequestParam List<String> userCodes) {
-        userService.deleteByUserCodes(userCodes); // 这里复用删除学生的方法，因为逻辑相同
+        userService.deleteTeachersByUserCodes(userCodes); // 这里复用删除学生的方法，因为逻辑相同
         return "redirect:/admin/teachers";
     }
 

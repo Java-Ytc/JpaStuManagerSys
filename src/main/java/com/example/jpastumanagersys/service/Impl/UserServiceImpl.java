@@ -1,6 +1,10 @@
 package com.example.jpastumanagersys.service.Impl;
 
+import com.example.jpastumanagersys.entity.Clazz;
+import com.example.jpastumanagersys.entity.Course;
 import com.example.jpastumanagersys.entity.User;
+import com.example.jpastumanagersys.repo.ClazzRepo;
+import com.example.jpastumanagersys.repo.CourseRepo;
 import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.UserService;
 import jakarta.transaction.Transactional;
@@ -25,6 +29,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private ClazzRepo clazzRepo;
+
+    @Autowired
+    private CourseRepo courseRepo;
 
     // 注册新用户
     @Override
@@ -67,12 +77,35 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    // 管理员根据条件批量删除用户
+    // 管理员根据学生编号，批量删除
     @Override
     @Transactional
-    public void deleteByUserCodes(List<String> userCodes) {
+    public void deleteStudentsByUserCodes(List<String> userCodes) {
+        for (String userCode : userCodes) {
+            User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("无法根据编号获取用户"));
+            Clazz clazz = user.getClazz();
+            if (clazz != null) {
+                clazz.getStudents().remove(user); // 从班级中移除学生
+                clazzRepo.save(clazz); // 保存班级信息
+            }
+        }
         userRepository.deleteAllByUserCodeIn(userCodes);
     }
+
+    // 管理员批量删除教师信息
+    @Override
+    @Transactional
+    public void deleteTeachersByUserCodes(List<String> userCodes) {
+        for (String userCode : userCodes) {
+            User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("无法根据编号获取用户"));
+            List<Course> courses = user.getCourses();
+            if (courses != null && !courses.isEmpty()) {
+                throw new IllegalStateException("教师 " + user.getUsername() + " 有相关授课，无法删除");
+            }
+        }
+        userRepository.deleteAllByUserCodeIn(userCodes);
+    }
+
 
     // 用户更改密码
     @Override
