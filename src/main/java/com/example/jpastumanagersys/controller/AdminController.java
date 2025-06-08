@@ -1,8 +1,10 @@
 package com.example.jpastumanagersys.controller;
 
 import com.example.jpastumanagersys.entity.Clazz;
+import com.example.jpastumanagersys.entity.Course;
 import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.service.ClazzService;
+import com.example.jpastumanagersys.service.CourseService;
 import com.example.jpastumanagersys.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,9 @@ public class AdminController {
 
     @Autowired
     private ClazzService clazzService;
+
+    @Autowired
+    private CourseService courseService;
 
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
@@ -189,7 +194,7 @@ public class AdminController {
             }
         } else if (className != null && !className.isEmpty()) {
             // 按班级名称查询
-            clazzPage = clazzService.getClassesByClassName(className, PageRequest.of(page, size));
+            clazzPage = clazzService.getByClassNameContaining(className, PageRequest.of(page, size));
         } else {
             // 查询所有班级
             clazzPage = clazzService.getAllClasses(PageRequest.of(page, size));
@@ -235,5 +240,72 @@ public class AdminController {
     public String deleteClass(@RequestParam List<String> classCodes) {
         clazzService.deleteByClassCodes(classCodes);
         return "redirect:/admin/classes";
+    }
+
+    // 显示课程列表页面，支持查询功能
+    @GetMapping("/courses")
+    public String listCourses(@RequestParam(required = false) String courseCode,
+                              @RequestParam(required = false) String courseName,
+                              @RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "10") int size,
+                              Model model) {
+
+        Page<Course> coursePage;
+        if (courseCode != null && !courseCode.isEmpty()) {
+            // 若课程编号存在，则仅按课程编号查询
+            Course course = courseService.getByCourseCode(courseCode);
+            if (course != null) {
+                coursePage = new PageImpl<>(Collections.singletonList(course), PageRequest.of(page, size), 1);
+            } else {
+                coursePage = new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), 0);
+            }
+        } else if (courseName != null && !courseName.isEmpty()) {
+            // 按课程名称查询
+            coursePage = courseService.getByCourseNameContaining(courseName, PageRequest.of(page, size));
+        } else {
+            // 查询所有课程
+            coursePage = courseService.getAllCourses(PageRequest.of(page, size));
+        }
+
+        model.addAttribute("courses", coursePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", coursePage.getTotalPages());
+        return "/admin/admin-course-list";
+    }
+
+    // 显示添加课程页面
+    @GetMapping("/courses/add")
+    public String addCourseForm(Model model) {
+        model.addAttribute("course", new Course());
+        return "/admin/admin-course-add-form";
+    }
+
+    // 保存新添加的课程信息
+    @PostMapping("/courses/save")
+    public String saveCourse(@ModelAttribute Course course) {
+        courseService.saveCourse(course);
+        return "redirect:/admin/courses";
+    }
+
+    // 显示编辑课程页面
+    @GetMapping("/courses/edit/{courseCode}")
+    public String editCourseForm(@PathVariable String courseCode, Model model) {
+        Course course = courseService.getByCourseCode(courseCode);
+        model.addAttribute("course", course);
+        return "/admin/admin-course-edit-form";
+    }
+
+    // 更新课程信息
+    @PostMapping("/courses/update")
+    public String updateCourse(@ModelAttribute Course course) {
+        courseService.updateCourse(course);
+        return "redirect:/admin/courses";
+    }
+
+    // 删除课程信息
+    @PostMapping("/courses/delete")
+    public String deleteCourse(@RequestParam List<String> courseCodes) {
+        courseService.deleteByCourseCodes(courseCodes);
+        return "redirect:/admin/courses";
     }
 }

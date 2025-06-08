@@ -7,17 +7,24 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface CourseService {
+    // 保存新课程
     Course saveCourse(Course course);
 
+    // 更新课程信息
     Course updateCourse(Course course);
 
-    void deleteCourse(Long id);
+    // 批量删除课程
+    void deleteByCourseCodes(List<String> courseCodes);
 
-    Course getCourseById(Long id);
+    // 根据课程编号获取课程信息
+    Course getByCourseCode(String courseCode);
 
-    List<Course> getAllCourses();
-
+    // 获取所有课程信息
     Page<Course> getAllCourses(Pageable pageable);
 
-    List<Course> getCoursesByTeacher(Long teacherId);
+    // 判断课程是否有老师
+    boolean hasTeacher(String courseCode);
+
+    // 根据课程名称获取课程信息
+    Page<Course> getByCourseNameContaining(String courseName, Pageable pageable);
 }

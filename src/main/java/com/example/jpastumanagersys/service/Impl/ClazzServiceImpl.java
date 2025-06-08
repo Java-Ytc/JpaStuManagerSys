@@ -18,7 +18,7 @@ public class ClazzServiceImpl implements ClazzService {
     @Autowired
     private ClazzRepo clazzRepo;
     @Autowired
-    private UserRepo userRepository;
+    private UserRepo userRepo;
 
     @Override
     public Clazz saveClass(Clazz classEntity) {
@@ -49,7 +49,7 @@ public class ClazzServiceImpl implements ClazzService {
             List<User> students = existingClass.getStudents();
             for (User student : students) {
                 student.setClazz(existingClass);
-                userRepository.save(student);
+                userRepo.save(student);
             }
         }
 
@@ -66,7 +66,7 @@ public class ClazzServiceImpl implements ClazzService {
         Page<Clazz> clazzPage = clazzRepo.findAll(pageable);
         // 为每个班级设置学生信息
         for (Clazz clazz : clazzPage.getContent()) {
-            List<User> students = userRepository.findByClazz_ClassCode(clazz.getClassCode(), pageable).getContent();
+            List<User> students = userRepo.findByClazz_ClassCode(clazz.getClassCode(), pageable).getContent();
             clazz.setStudents(students);
         }
         return clazzPage;
@@ -74,12 +74,12 @@ public class ClazzServiceImpl implements ClazzService {
 
     @Override
     public boolean hasStudents(String classCode) {
-        Clazz classEntity = clazzRepo.findByClassCode(classCode).orElseThrow(() -> new IllegalArgumentException("检查班级是否有学生时，没有找到对应编号的班级"));
-        return !classEntity.getStudents().isEmpty();
+        Clazz clazz = clazzRepo.findByClassCode(classCode).orElseThrow(() -> new IllegalArgumentException("检查班级是否有学生时，没有找到对应编号的班级"));
+        return !clazz.getStudents().isEmpty();
     }
 
     @Override
-    public Page<Clazz> getClassesByClassName(String className, Pageable pageable) {
+    public Page<Clazz> getByClassNameContaining(String className, Pageable pageable) {
         return clazzRepo.findByClassNameContaining(className, pageable);
     }
 }

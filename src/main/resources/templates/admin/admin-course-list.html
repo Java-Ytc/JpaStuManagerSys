@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>管理员课程列表</title>
+</head>
+<body>
+<h1>管理员课程列表</h1>
+<a href="/admin/courses/add">添加新课程</a>
+<form action="/admin/courses" method="get">
+  <label for="courseCode">课程编号:</label>
+  <input type="text" id="courseCode" name="courseCode" th:value="${param.courseCode}">
+  <label for="courseName">课程名称:</label>
+  <input type="text" id="courseName" name="courseName" th:value="${param.courseName}">
+  <button type="submit">查询</button>
+</form>
+<form action="/admin/courses/delete" method="post">
+  <table>
+    <thead>
+    <tr>
+      <!-- 添加一个全选的复选框，能够选中全部的数据 -->
+      <th>
+        <label for="selectAll">全选</label>
+        <input type="checkbox" id="selectAll"/>
+      </th>
+      <th>课程编号</th>
+      <th>课程名称</th>
+      <th>授课老师</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${courses}">
+      <td>
+        <label th:for="${'checkbox_' + course.courseCode}">选择</label>
+        <input type="checkbox" id="${'checkbox_' + course.courseCode}" name="courseCodes" th:value="${course.courseCode}"/>
+      </td>
+      <td th:text="${course.courseCode}"></td>
+      <td th:text="${course.courseName}"></td>
+      <td th:text="${course.teacher != null ? course.teacher.username : '无'}"></td>
+      <td>
+        <a th:href="@{/admin/courses/edit/{courseCode}(courseCode=${course.courseCode})}">编辑</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <button type="submit">批量删除</button>
+</form>
+<div>
+  <a th:href="@{/admin/courses(page=${currentPage - 1})}" th:if="${currentPage > 0}">上一页</a>
+  <a th:href="@{/admin/courses(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">下一页</a>
+</div>
+<script>
+  document.getElementById('selectAll').addEventListener('change', function () {
+    // 通过 courseCode 选中全部的数据
+    const checkboxes = document.querySelectorAll('input[name="courseCodes"]');
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = this.checked;
+    });
+  });
+</script>
+</body>
+</html>

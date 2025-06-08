@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -14,7 +15,19 @@ public class Course {
     private Long id;
 
     private String courseName;
+
+    @Column(unique = true)
     private String courseCode;
+
+    @PrePersist
+    public void generateCourseCode() {
+        if (courseCode == null) {
+            // 生成一个唯一的6位数编号
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            courseCode = uuid.substring(0, 6);
+        }
+    }
+
     private int maxStudents;
     private int currentStudents;
     private String courseTime;

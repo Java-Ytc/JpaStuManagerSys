@@ -26,5 +26,5 @@ public interface ClazzService {
     boolean hasStudents(String classCode);
 
     // 根据班级名称查找班级信息
-    Page<Clazz> getClassesByClassName(String className, Pageable pageable);
+    Page<Clazz> getByClassNameContaining(String className, Pageable pageable);
 }
