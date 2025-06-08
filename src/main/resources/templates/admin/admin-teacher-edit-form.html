@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑教师信息</title>
+</head>
+<body>
+<h1>编辑教师信息</h1>
+<form action="/admin/teachers/update" method="post" th:object="${user}">
+    <input type="hidden" name="userCode" th:field="*{userCode}">
+    <input type="hidden" name="role" th:value="'TEACHER'">
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" th:field="*{username}" required><br>
+    <label for="password">新密码:</label>
+    <input type="password" id="password" name="password" th:field="*{password}"><br>
+    <button type="submit">更新</button>
+</form>
+<a href="/admin/teachers">返回教师列表</a>
+</body>
+</html>

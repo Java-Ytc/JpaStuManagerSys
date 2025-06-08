@@ -22,7 +22,7 @@ public class UserController {
     public String viewProfile(Model model) {
         // 从 SecurityContext 中获取当前用户的 userCode
         String userCode = getCurrentUserCode();
-        User user = userService.getUserByUserCode(userCode);
+        User user = userService.getByUserCode(userCode);
         model.addAttribute("user", user);
         return "profile";
     }

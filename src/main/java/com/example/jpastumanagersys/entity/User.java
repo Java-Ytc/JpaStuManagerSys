@@ -32,10 +32,16 @@ public class User {
         }
     }
 
+    // 一个user（学生）只能关联一个 clazz，一个 clazz 可以有多个学生，多（学生）对一（教室）
     @ManyToOne
     @JoinColumn(name = "clazz_id")
     private Clazz clazz;
 
+    // 一个user（学生）可以有多个 course_selection，一个 course_selection 对应一个user（学生），一（user 学生）对多（course_selection 选课记录）
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<CourseSelection> courseSelections;
+
+    // 一个user（教师）可以有多个 course，一个 course 只能对应一个user（教师），多（user 教师）对一（course 课程）
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+    private List<Course> courses;
 }

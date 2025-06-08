@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>管理员添加班级表单</title>
+</head>
+<body>
+<h1>管理员添加班级表单</h1>
+<form action="#" th:action="@{/admin/classes/save}" th:object="${clazz}" method="post">
+  <label for="className">班级名称:</label>
+  <input type="text" id="className" th:field="*{className}" required />
+  <br />
+  <button type="submit">保存</button>
+</form>
+</body>
+</html>

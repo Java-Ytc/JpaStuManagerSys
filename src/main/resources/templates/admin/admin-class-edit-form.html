@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>管理员编辑班级表单</title>
+</head>
+<body>
+<h1>管理员编辑班级表单</h1>
+<form action="#" th:action="@{/admin/classes/update}" th:object="${clazz}" method="post">
+  <input type="hidden" th:field="*{classCode}" />
+  <label for="className">班级名称:</label>
+  <input type="text" id="className" th:field="*{className}" required />
+  <br />
+  <button type="submit">保存</button>
+</form>
+</body>
+</html>

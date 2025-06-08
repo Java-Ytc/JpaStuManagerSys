@@ -33,10 +33,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    // 管理员更新用户信息，更新用户密码无需输入旧的密码
+    // 管理员更新学生信息，更新用户密码无需输入旧的密码
     @Override
-    public User updateUser(User user) {
-        User existingUser = userRepository.findByUserCode(user.getUserCode()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public User updateStudent(User user) {
+        User existingUser = userRepository.findByUserCode(user.getUserCode()).orElseThrow(() -> new IllegalArgumentException("没有找到学生"));
 
         existingUser.setUsername(user.getUsername());
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
@@ -55,15 +55,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
-    // 根据用户编号删除用户
-    @Override
-    public void deleteUserByUserCode(String userCode) {
-        userRepository.deleteUserByUserCode(userCode);
-    }
-
     // 根据用户编号获取用户
     @Override
-    public User getUserByUserCode(String userCode) {
+    public User getByUserCode(String userCode) {
         return userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("无法根据编号获取用户"));
     }
 
@@ -94,12 +88,13 @@ public class UserServiceImpl implements UserService {
         return org.springframework.security.core.userdetails.User.withUsername(user.getUsername()).password(user.getPassword()).roles(user.getRole()).build();
     }
 
-    // 根据条件获取用户
+    // 管理员根据条件获取学生
     @Override
-    public Page<User> getStudentsByCondition(String userCode, String username, Long classId, Pageable pageable) {
+    public Page<User> getStudentsByCondition(String userCode, String username, String clazzCode, Pageable pageable) {
         Page<User> allUsersPage;
         if (userCode != null && !userCode.isEmpty()) {
-            // 用户编号是唯一的，获取的用户是唯一的，需要进行转换格式
+            System.out.println("执行学生编号查询");
+            // 若学生编号存在，则仅按学生编号查询
             Optional<User> userOptional = userRepository.findByUserCode(userCode);
             if (userOptional.isPresent()) {
                 List<User> userList = Collections.singletonList(userOptional.get());
@@ -107,14 +102,27 @@ public class UserServiceImpl implements UserService {
             } else {
                 allUsersPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
             }
-        } else if (username != null && classId != null) {
-            allUsersPage = userRepository.findByUsernameContainingAndClazz_Id(username, classId, pageable);
-        } else if (username != null) {
+
+            System.out.println("学生编号查询到的用户数量：" + allUsersPage.getContent().size());
+        } else if ((username != null && !username.isEmpty()) && (clazzCode != null && !clazzCode.isEmpty())) {
+            System.out.println("执行联合查询");
+            // 用户名和班级编号联合查询
+            allUsersPage = userRepository.findByUsernameContainingAndClazz_ClassCode(username, clazzCode, pageable);
+            System.out.println("联合查询到的用户数量：" + allUsersPage.getContent().size());
+        } else if (username != null && !username.isEmpty()) {
+            System.out.println("执行用户名查询");
+            // 按用户名查询
             allUsersPage = userRepository.findByUsernameContaining(username, pageable);
-        } else if (classId != null) {
-            allUsersPage = userRepository.findByClazz_Id(classId, pageable);
+            System.out.println("用户名查询到的用户数量：" + allUsersPage.getContent().size());
+        } else if (clazzCode != null && !clazzCode.isEmpty()) {
+            System.out.println("执行班级查询");
+            // 按班级编号查询
+            allUsersPage = userRepository.findByClazz_ClassCode(clazzCode, pageable);
+            System.out.println("班级查询到的用户数量：" + allUsersPage.getContent().size());
         } else {
+            // 查询所有学生
             allUsersPage = userRepository.findAll(pageable);
+            System.out.println("查询所有学生的用户数量：" + allUsersPage.getContent().size());
         }
 
         // 过滤出角色为 STUDENT 的用户
@@ -122,12 +130,71 @@ public class UserServiceImpl implements UserService {
                 .filter(user -> "STUDENT".equals(user.getRole()))
                 .collect(Collectors.toList());
 
+        System.out.println("过滤后学生数量：" + studentList.size());
+
         return new PageImpl<>(studentList, pageable, studentList.size());
     }
 
+    // 管理员根据条件批量删除学生
     @Override
     @Transactional
-    public void deleteStudentsByUserCodes(List<String> userCodes) {
+    public void deleteByUserCodes(List<String> userCodes) {
         userRepository.deleteAllByUserCodeIn(userCodes);
     }
+
+    // 管理员根据条件获取教师
+    @Override
+    public Page<User> getTeachersByCondition(String userCode, String username, String courseCode, Pageable pageable) {
+        Page<User> allUsersPage;
+        if (userCode != null && !userCode.isEmpty()) {
+            // 若教师编号存在，则仅按教师编号查询
+            Optional<User> userOptional = userRepository.findByUserCode(userCode);
+            if (userOptional.isPresent()) {
+                List<User> userList = Collections.singletonList(userOptional.get());
+                allUsersPage = new PageImpl<>(userList, pageable, userList.size());
+            } else {
+                allUsersPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+            }
+        } else if ((username != null && !username.isEmpty()) && (courseCode != null && !courseCode.isEmpty())) {
+            // 用户名和课程编号联合查询
+            allUsersPage = userRepository.findByUsernameContainingAndCourses_CourseCode(username, courseCode, pageable);
+        } else if (username != null && !username.isEmpty()) {
+            // 按用户名查询
+            allUsersPage = userRepository.findByUsernameContaining(username, pageable);
+        } else if (courseCode != null && !courseCode.isEmpty()) {
+            // 按课程编号查询
+            allUsersPage = userRepository.findByCourses_CourseCode(courseCode, pageable);
+        } else {
+            // 查询所有教师
+            allUsersPage = userRepository.findAll(pageable);
+        }
+
+        // 过滤出角色为TEACHER的用户
+        List<User> teacherList = allUsersPage.getContent().stream()
+                .filter(user -> "TEACHER".equals(user.getRole()))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(teacherList, pageable, teacherList.size());
+    }
+
+    // 管理员更新教师信息
+    @Override
+    public User updateTeacher(User user) {
+        User existingUser = userRepository.findByUserCode(user.getUserCode()).orElseThrow(() -> new IllegalArgumentException("没有找到教师"));
+
+        existingUser.setUsername(user.getUsername());
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        existingUser.setEmail(user.getEmail());
+        existingUser.setPhone(user.getPhone());
+
+        // 检查新角色是否为空，若为空则使用原角色
+        if (user.getRole() != null && !user.getRole().isEmpty()) {
+            existingUser.setRole(user.getRole());
+        }
+
+        return userRepository.save(existingUser);
+    }
+
 }

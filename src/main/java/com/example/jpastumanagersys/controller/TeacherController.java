@@ -28,13 +28,13 @@ public class TeacherController {
         Long teacherId = 2L;
         List<Course> courses = courseService.getCoursesByTeacher(teacherId);
         model.addAttribute("courses", courses);
-        return "teacher-dashboard";
+        return "/teacher/teacher-dashboard";
     }
 
     @GetMapping("/course/{courseId}/students")
     public String viewCourseStudents(@PathVariable Long courseId, Model model) {
         List<CourseSelection> selections = selectionService.getSelectionsByCourse(courseId);
         model.addAttribute("selections", selections);
-        return "teacher-course-students";
+        return "teacher/teacher-course-students";
     }
 }

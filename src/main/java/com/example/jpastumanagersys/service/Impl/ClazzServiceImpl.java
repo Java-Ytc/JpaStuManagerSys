@@ -1,6 +1,7 @@
 package com.example.jpastumanagersys.service.Impl;
 
 import com.example.jpastumanagersys.entity.Clazz;
+import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.repo.ClazzRepo;
 import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.ClazzService;
@@ -24,37 +25,58 @@ public class ClazzServiceImpl implements ClazzService {
     }
 
     @Override
-    public void deleteClass(Long id) {
-        if (!hasStudents(id)) {
-            clazzRepo.deleteById(id);
+    public void deleteByClassCode(String classCode) {
+        if (!hasStudents(classCode)) {
+            clazzRepo.deleteByClassCode(classCode);
         } else {
-            throw new IllegalStateException("Cannot delete a class with students.");
+            throw new IllegalStateException("教室中已有学生，无法删除");
         }
     }
 
     @Override
-    public Clazz updateClass(Clazz classEntity) {
-        return clazzRepo.save(classEntity);
+    public Clazz updateClass(Clazz clazz) {
+        Clazz existingClass = clazzRepo.findByClassCode(clazz.getClassCode())
+                .orElseThrow(() -> new IllegalArgumentException("更新班级信息时，没有找到对应编号的班级"));
+
+        // 更新班级名称
+        existingClass.setClassName(clazz.getClassName());
+
+        // 处理班级下有学生的情况，级联修改学生的班级信息
+        if (!existingClass.getStudents().isEmpty()) {
+            List<User> students = existingClass.getStudents();
+            for (User student : students) {
+                student.setClazz(existingClass);
+                userRepository.save(student);
+            }
+        }
+
+        return clazzRepo.save(existingClass);
     }
 
     @Override
-    public Clazz getClassById(Long id) {
-        return clazzRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Class not found"));
-    }
-
-    @Override
-    public List<Clazz> getAllClasses() {
-        return clazzRepo.findAll();
+    public Clazz getByClassCode(String classCode) {
+        return clazzRepo.findByClassCode(classCode).orElseThrow(() -> new IllegalArgumentException("获取班级信息时，没有找到对应编号的班级"));
     }
 
     @Override
     public Page<Clazz> getAllClasses(Pageable pageable) {
-        return clazzRepo.findAll(pageable);
+        Page<Clazz> clazzPage = clazzRepo.findAll(pageable);
+        // 为每个班级设置学生信息
+        for (Clazz clazz : clazzPage.getContent()) {
+            List<User> students = userRepository.findByClazz_ClassCode(clazz.getClassCode(), pageable).getContent();
+            clazz.setStudents(students);
+        }
+        return clazzPage;
     }
 
     @Override
-    public boolean hasStudents(Long classId) {
-        Clazz classEntity = clazzRepo.findById(classId).orElseThrow(() -> new IllegalArgumentException("Class not found"));
+    public boolean hasStudents(String classCode) {
+        Clazz classEntity = clazzRepo.findByClassCode(classCode).orElseThrow(() -> new IllegalArgumentException("检查班级是否有学生时，没有找到对应编号的班级"));
         return !classEntity.getStudents().isEmpty();
+    }
+
+    @Override
+    public Page<Clazz> getClassesByClassName(String className, Pageable pageable) {
+        return clazzRepo.findByClassNameContaining(className, pageable);
     }
 }

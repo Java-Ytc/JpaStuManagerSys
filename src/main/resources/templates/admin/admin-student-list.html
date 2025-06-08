@@ -7,10 +7,12 @@
 <body>
 <h1>管理员学生列表</h1>
 <form action="/admin/students" method="get">
-    <label for="name">姓名:</label>
-    <input type="text" id="name" name="name"/>
-    <label for="classId">班级 ID:</label>
-    <input type="number" id="classId" name="classId"/>
+    <label for="userCode">学生编号:</label>
+    <input type="text" id="userCode" name="userCode"/>
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username"/>
+    <label for="classCode">班级编号:</label>
+    <input type="text" id="classCode" name="classCode"/>
     <button type="submit">搜索</button>
 </form>
 <form action="/admin/students/delete" method="post">
@@ -22,7 +24,7 @@
                 <label for="selectAll">全选</label>
                 <input type="checkbox" id="selectAll"/>
             </th>
-            <th>用户编号</th>
+            <th>学生编号</th>
             <th>用户名</th>
             <th>邮箱</th>
             <th>电话</th>

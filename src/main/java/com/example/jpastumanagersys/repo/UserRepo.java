@@ -10,23 +10,24 @@ import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<User, Long> {
 
-    // 按姓名模糊查询学生信息
-    Page<User> findByUsernameContaining(String name, Pageable pageable);
-
-    // 按班级 ID 查询学生信息
-    Page<User> findByClazz_Id(Long classId, Pageable pageable);
-
-    // 按姓名和班级 ID 联合查询学生信息
-    Page<User> findByUsernameContainingAndClazz_Id(String name, Long classId, Pageable pageable);
-
-    // 按照姓名删除删除用户信息
-    void deleteByUsername(String username);
-
-    // 按照编号删除用户信息
-    void deleteUserByUserCode(String userCode);
-
     // 根据用户编号获取用户信息
     Optional<User> findByUserCode(String userCode);
 
+    // 按姓名模糊查询学生信息
+    Page<User> findByUsernameContaining(String username, Pageable pageable);
+
+    // 根据教室编号查询学生信息
+    Page<User> findByClazz_ClassCode(String clazzClassCode, Pageable pageable);
+
+    // 按用户名和班级编号 联合查询学生信息
+    Page<User> findByUsernameContainingAndClazz_ClassCode(String username, String classCode, Pageable pageable);
+
+    // 根据用户编号批量删除用户信息
     void deleteAllByUserCodeIn(List<String> userCodes);
+
+    // 根据课程编号查询教师信息
+    Page<User> findByCourses_CourseCode(String courseCode, Pageable pageable);
+
+    // 根据用户名和课程编号 联合模糊查询教师信息
+    Page<User> findByUsernameContainingAndCourses_CourseCode(String username, String courseCode, Pageable pageable);
 }

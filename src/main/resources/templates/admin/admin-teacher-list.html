@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>教师列表</title>
+</head>
+<body>
+<h1>教师列表</h1>
+<a href="/admin/teachers/add">添加新教师</a>
+<p>注意：教师编号是唯一的，若输入教师编号，则仅按教师编号查询。</p>
+<form action="/admin/teachers" method="get">
+    <label for="userCode">教师编号:</label>
+    <input type="text" id="userCode" name="userCode" th:value="${param.userCode}">
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" th:value="${param.username}">
+    <label for="courseCode">课程编号:</label>
+    <input type="text" id="courseCode" name="courseCode" th:value="${param.courseCode}">
+    <button type="submit">查询</button>
+</form>
+<table>
+    <thead>
+    <tr>
+        <th>教师编号</th>
+        <th>教师姓名</th>
+        <th>邮箱</th>
+        <th>电话</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 检查是否有教师数据 -->
+    <tr th:if="${#lists.isEmpty(teachers)}">
+        <td colspan="5">没有教师信息</td>
+    </tr>
+    <tr th:each="teacher : ${teachers}">
+        <td th:text="${teacher.userCode}"></td>
+        <td th:text="${teacher.username}"></td>
+        <td th:text="${teacher.email}"></td>
+        <td th:text="${teacher.phone}"></td>
+        <td>
+            <label th:for="${'edit_' + teacher.userCode}">编辑</label>
+            <a id="${'edit_' + teacher.userCode}" th:href="@{/admin/teachers/edit/{userCode}(userCode=${teacher.userCode})}">编辑</a>
+            <label th:for="${'checkbox_' + teacher.userCode}">选择</label>
+            <input type="checkbox" id="${'checkbox_' + teacher.userCode}" name="userCodes" th:value="${teacher.userCode}">
+        </td>
+    </tr>
+    </tbody>
+</table>
+<!-- 分页导航 -->
+<div>
+    <a th:href="@{/admin/teachers(page=${currentPage - 1}, size=10)}" th:if="${currentPage > 0}">上一页</a>
+    <a th:href="@{/admin/teachers(page=${currentPage + 1}, size=10)}" th:if="${currentPage < totalPages - 1}">下一页</a>
+</div>
+<form action="/admin/teachers/delete" method="post">
+    <button type="submit">批量删除</button>
+</form>
+</body>
+</html>

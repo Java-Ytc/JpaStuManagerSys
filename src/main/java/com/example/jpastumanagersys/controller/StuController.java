@@ -22,6 +22,6 @@ public class StuController {
         Long studentId = 3L;
         List<CourseSelection> selections = selectionService.getSelectionsByStudent(studentId);
         model.addAttribute("selections", selections);
-        return "student-dashboard";
+        return "/stu/stu-dashboard";
     }
 }

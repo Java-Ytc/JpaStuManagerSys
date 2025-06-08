@@ -13,6 +13,7 @@ public class LeaveApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 一个学生可以有多条请假申请，一个请假记录只能对应一个学生用户，多（请假记录）对一（学生用户）
     @ManyToOne
     @JoinColumn(name = "student_id")
     private User student;
