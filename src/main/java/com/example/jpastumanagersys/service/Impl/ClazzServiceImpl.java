@@ -5,6 +5,7 @@ import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.repo.ClazzRepo;
 import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.ClazzService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,12 +26,14 @@ public class ClazzServiceImpl implements ClazzService {
     }
 
     @Override
-    public void deleteByClassCode(String classCode) {
-        if (!hasStudents(classCode)) {
-            clazzRepo.deleteByClassCode(classCode);
-        } else {
-            throw new IllegalStateException("教室中已有学生，无法删除");
+    @Transactional
+    public void deleteByClassCodes(List<String> classCodes) {
+        for (String classCode : classCodes) {
+            if (hasStudents(classCode)) {
+                throw new IllegalStateException("教室 " + classCode + " 中已有学生，无法删除");
+            }
         }
+        clazzRepo.deleteAllByClassCodeIn(classCodes);
     }
 
     @Override

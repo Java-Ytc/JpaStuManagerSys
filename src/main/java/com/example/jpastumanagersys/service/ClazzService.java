@@ -4,12 +4,14 @@ import com.example.jpastumanagersys.entity.Clazz;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface ClazzService {
     // 保存新班级
     Clazz saveClass(Clazz clazz);
 
-    // 根据班级编号删除班级
-    void deleteByClassCode(String classCode);
+    // 根据教室编号批量删除教室信息
+    void deleteByClassCodes(List<String> classCodes);
 
     // 更新班级信息
     Clazz updateClass(Clazz classEntity);

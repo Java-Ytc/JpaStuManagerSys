@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ClazzRepo extends JpaRepository<Clazz, Long> {
@@ -12,7 +13,7 @@ public interface ClazzRepo extends JpaRepository<Clazz, Long> {
     Optional<Clazz> findByClassCode(String classCode);
 
     // 根据班级编号删除
-    void deleteByClassCode(String classCode);
+    void deleteAllByClassCodeIn(List<String> classCodes);
 
     // 根据班级名称模糊查找
     Page<Clazz> findByClassNameContaining(String className, Pageable pageable);

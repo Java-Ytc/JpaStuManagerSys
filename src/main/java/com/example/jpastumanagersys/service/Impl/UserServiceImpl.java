@@ -67,6 +67,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    // 管理员根据条件批量删除用户
+    @Override
+    @Transactional
+    public void deleteByUserCodes(List<String> userCodes) {
+        userRepository.deleteAllByUserCodeIn(userCodes);
+    }
+
     // 用户更改密码
     @Override
     public User changePassword(String userCode, String oldPassword, String newPassword) {
@@ -133,13 +140,6 @@ public class UserServiceImpl implements UserService {
         System.out.println("过滤后学生数量：" + studentList.size());
 
         return new PageImpl<>(studentList, pageable, studentList.size());
-    }
-
-    // 管理员根据条件批量删除学生
-    @Override
-    @Transactional
-    public void deleteByUserCodes(List<String> userCodes) {
-        userRepository.deleteAllByUserCodeIn(userCodes);
     }
 
     // 管理员根据条件获取教师

@@ -231,13 +231,9 @@ public class AdminController {
     }
 
     // 删除班级信息
-    @GetMapping("/classes/delete/{classCode}")
-    public String deleteClass(@PathVariable String classCode) {
-        try {
-            clazzService.deleteByClassCode(classCode);
-        } catch (IllegalStateException e) {
-            // 处理班级有学生的情况，可添加错误信息到模型
-        }
+    @PostMapping("/classes/delete")
+    public String deleteClass(@RequestParam List<String> classCodes) {
+        clazzService.deleteByClassCodes(classCodes);
         return "redirect:/admin/classes";
     }
 }

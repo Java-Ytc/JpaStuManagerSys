@@ -17,42 +17,58 @@
     <input type="text" id="courseCode" name="courseCode" th:value="${param.courseCode}">
     <button type="submit">查询</button>
 </form>
-<table>
-    <thead>
-    <tr>
-        <th>教师编号</th>
-        <th>教师姓名</th>
-        <th>邮箱</th>
-        <th>电话</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- 检查是否有教师数据 -->
-    <tr th:if="${#lists.isEmpty(teachers)}">
-        <td colspan="5">没有教师信息</td>
-    </tr>
-    <tr th:each="teacher : ${teachers}">
-        <td th:text="${teacher.userCode}"></td>
-        <td th:text="${teacher.username}"></td>
-        <td th:text="${teacher.email}"></td>
-        <td th:text="${teacher.phone}"></td>
-        <td>
-            <label th:for="${'edit_' + teacher.userCode}">编辑</label>
-            <a id="${'edit_' + teacher.userCode}" th:href="@{/admin/teachers/edit/{userCode}(userCode=${teacher.userCode})}">编辑</a>
-            <label th:for="${'checkbox_' + teacher.userCode}">选择</label>
-            <input type="checkbox" id="${'checkbox_' + teacher.userCode}" name="userCodes" th:value="${teacher.userCode}">
-        </td>
-    </tr>
-    </tbody>
-</table>
-<!-- 分页导航 -->
+<form action="/admin/teachers/delete" method="post">
+    <table>
+        <thead>
+        <tr>
+            <!-- 添加一个全选的复选框，能够选中全部的数据 -->
+            <th>
+                <label for="selectAll">全选</label>
+                <input type="checkbox" id="selectAll"/>
+            </th>
+            <th>教师编号</th>
+            <th>教师姓名</th>
+            <th>邮箱</th>
+            <th>电话</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 检查是否有教师数据 -->
+        <tr th:if="${#lists.isEmpty(teachers)}">
+            <td colspan="6">没有教师信息</td>
+        </tr>
+        <!-- 遍历教师列表，为每一个教师数据生成一行表格数据 -->
+        <tr th:each="teacher : ${teachers}">
+            <!-- 选中教师数据中的 userCode 作为删除时的参数传递到 AdminController -->
+            <td>
+                <label th:for="${'checkbox_' + teacher.userCode}">选择</label>
+                <input type="checkbox" id="${'checkbox_' + teacher.userCode}" name="userCodes" th:value="${teacher.userCode}"/>
+            </td>
+            <td th:text="${teacher.userCode}"></td>
+            <td th:text="${teacher.username}"></td>
+            <td th:text="${teacher.email}"></td>
+            <td th:text="${teacher.phone}"></td>
+            <td>
+                <a th:href="@{/admin/teachers/edit/{userCode}(userCode=${teacher.userCode})}">编辑</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit">删除选中项</button>
+</form>
 <div>
     <a th:href="@{/admin/teachers(page=${currentPage - 1}, size=10)}" th:if="${currentPage > 0}">上一页</a>
     <a th:href="@{/admin/teachers(page=${currentPage + 1}, size=10)}" th:if="${currentPage < totalPages - 1}">下一页</a>
 </div>
-<form action="/admin/teachers/delete" method="post">
-    <button type="submit">批量删除</button>
-</form>
+<script>
+    document.getElementById('selectAll').addEventListener('change', function () {
+        // 通过 userCode 选中全部的数据
+        const checkboxes = document.querySelectorAll('input[name="userCodes"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+</script>
 </body>
 </html>

@@ -7,6 +7,13 @@
 <body>
 <h1>管理员班级列表</h1>
 <a href="/admin/classes/add">添加新班级</a>
+<form action="/admin/classes" method="get">
+  <label for="classCode">班级编号:</label>
+  <input type="text" id="classCode" name="classCode" th:value="${param.classCode}">
+  <label for="className">班级名称:</label>
+  <input type="text" id="className" name="className" th:value="${param.className}">
+  <button type="submit">查询</button>
+</form>
 <form action="/admin/classes/delete" method="post">
   <table>
     <thead>
@@ -33,7 +40,6 @@
       <td th:text="${clazz.students != null && !clazz.students.isEmpty() ? clazz.students.size() : '没有学生'}"></td>
       <td>
         <a th:href="@{/admin/classes/edit/{classCode}(classCode=${clazz.classCode})}">编辑</a>
-        <a th:href="@{/admin/classes/delete/{classCode}(classCode=${clazz.classCode})}">删除</a>
       </td>
     </tr>
     </tbody>
