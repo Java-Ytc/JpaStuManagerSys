@@ -15,7 +15,6 @@ public interface CourseRepo extends JpaRepository<Course, Long> {
     // 根据课程编号删除
     void deleteAllByCourseCodeIn(List<String> courseCode);
 
+    // 根据课程名称进行模糊查询
     Page<Course> findByCourseNameContaining(String courseName, Pageable pageable);
-
-    List<Course> findByTeacherId(Long teacherId);
 }
