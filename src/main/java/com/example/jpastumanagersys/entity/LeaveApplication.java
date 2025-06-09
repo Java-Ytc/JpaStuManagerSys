@@ -3,7 +3,7 @@ package com.example.jpastumanagersys.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -18,8 +18,8 @@ public class LeaveApplication {
     @JoinColumn(name = "student_id")
     private User student;
 
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String reason;
     private boolean approved;
 }

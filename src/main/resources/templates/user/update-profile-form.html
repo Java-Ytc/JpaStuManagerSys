@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>修改用户信息</title>
+</head>
+<body>
+<h1>修改用户信息</h1>
+<!-- 显示错误信息 -->
+<p th:if="${error}" th:text="${error}" style="color: red;"></p>
+<form action="#" th:action="@{/user/update-profile}" th:object="${student}" method="post">
+    <label for="username">用户名:</label>
+    <input type="text" id="username" th:field="*{username}" required><br>
+    <label for="email">邮箱:</label>
+    <input type="email" id="email" th:field="*{email}" required><br>
+    <label for="phone">电话:</label>
+    <input type="text" id="phone" th:field="*{phone}" required><br>
+    <input type="submit" value="保存修改">
+</form>
+</body>
+</html>

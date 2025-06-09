@@ -1,40 +1,49 @@
 package com.example.jpastumanagersys.service.Impl;
 
 import com.example.jpastumanagersys.entity.LeaveApplication;
+import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.repo.LeaveApplicationRepo;
+import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.LeaveApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class LeaveApplicationServiceImpl implements LeaveApplicationService {
     @Autowired
-    private LeaveApplicationRepo leaveApplicationRepository;
+    private LeaveApplicationRepo leaveApplicationRepo;
+
+    @Autowired
+    private UserRepo userRepo;
 
     @Override
-    public LeaveApplication saveLeaveApplication(LeaveApplication leaveApplication) {
-        return leaveApplicationRepository.save(leaveApplication);
-    }
+    public LeaveApplication applyForLeave(Long studentId, LocalDate startDate, LocalDate endDate, String reason) {
+        User student = userRepo.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
 
-    @Override
-    public LeaveApplication updateLeaveApplication(LeaveApplication leaveApplication) {
-        return leaveApplicationRepository.save(leaveApplication);
-    }
+        LeaveApplication leaveApplication = new LeaveApplication();
+        leaveApplication.setStudent(student);
+        leaveApplication.setStartDate(startDate);
+        leaveApplication.setEndDate(endDate);
+        leaveApplication.setReason(reason);
+        leaveApplication.setApproved(false);
 
-    @Override
-    public void deleteLeaveApplication(Long id) {
-        leaveApplicationRepository.deleteById(id);
-    }
-
-    @Override
-    public LeaveApplication getLeaveApplicationById(Long id) {
-        return leaveApplicationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Leave application not found"));
+        return leaveApplicationRepo.save(leaveApplication);
     }
 
     @Override
     public List<LeaveApplication> getLeaveApplicationsByStudent(Long studentId) {
-        return leaveApplicationRepository.findByStudentId(studentId);
+        User student = userRepo.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
+        return leaveApplicationRepo.findByStudent(student);
+    }
+
+    @Override
+    public Page<LeaveApplication> getLeaveApplicationsByStudent(Long studentId, Pageable pageable) {
+        User student = userRepo.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
+        return leaveApplicationRepo.findByStudent(student, pageable);
     }
 }

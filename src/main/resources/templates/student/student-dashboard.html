@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>学生主页</title>
+</head>
+<body>
+<h1>欢迎，[[${student.username}]]</h1>
+
+<!-- 显示选课记录 -->
+<h2>选课记录</h2>
+<table>
+    <thead>
+    <tr>
+        <th>课程编号</th>
+        <th>课程名称</th>
+        <th>选课日期</th>
+        <th>成绩</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="selection : ${selections}">
+        <td th:text="${selection.course.courseCode}"></td>
+        <td th:text="${selection.course.courseName}"></td>
+        <td th:text="${#dates.format(selection.selectionDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="${selection.score}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 修改用户信息按钮 -->
+<a href="/user/update-profile-form">修改用户信息</a>
+
+<!-- 修改密码按钮 -->
+<a href="/user/change-password-form">修改密码</a>
+
+<!-- 选课按钮 -->
+<a href="/student/select-course">点击选课</a>
+
+<!-- 请假按钮 -->
+<a href="/student/apply-leave">申请请假</a>
+
+<!-- 查看请假记录按钮 -->
+<a href="/student/leave-applications">查看请假记录</a>
+</body>
+</html>

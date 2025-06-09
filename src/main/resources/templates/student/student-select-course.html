@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>学生选课</title>
+</head>
+<body>
+<h1>学生选课</h1>
+<p th:if="${message}" style="color: green;">[[${message}]]</p>
+<p th:if="${error}" style="color: red;">[[${error}]]</p>
+<table>
+  <thead>
+  <tr>
+    <th>课程编号</th>
+    <th>课程名称</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="course : ${courses}">
+    <td th:text="${course.courseCode}"></td>
+    <td th:text="${course.courseName}"></td>
+    <td>
+      <form action="/student/select-course" method="post">
+        <input type="hidden" th:value="${course.id}" name="courseId">
+        <input type="submit" value="选课">
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<a href="/student/dashboard">返回学生主页</a>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>学生请假记录</title>
+</head>
+<body>
+<h1>学生请假记录</h1>
+<table>
+  <thead>
+  <tr>
+    <th>开始日期</th>
+    <th>结束日期</th>
+    <th>请假原因</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="leaveApplication : ${leaveApplications}">
+    <td th:text="${#temporals.format(leaveApplication.startDate, 'yyyy-MM-dd')}"></td>
+    <td th:text="${#temporals.format(leaveApplication.endDate, 'yyyy-MM-dd')}"></td>
+    <td th:text="${leaveApplication.reason}"></td>
+  </tr>
+  </tbody>
+</table>
+<a href="/student/dashboard">返回学生主页</a>
+</body>
+</html>

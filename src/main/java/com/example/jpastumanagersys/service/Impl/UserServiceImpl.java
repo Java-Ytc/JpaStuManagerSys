@@ -1,5 +1,6 @@
 package com.example.jpastumanagersys.service.Impl;
 
+import com.example.jpastumanagersys.config.CustomUserDetails;
 import com.example.jpastumanagersys.entity.Clazz;
 import com.example.jpastumanagersys.entity.Course;
 import com.example.jpastumanagersys.entity.User;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -125,8 +128,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetails loadUserByUsername(String userCode) throws UsernameNotFoundException {
         User user = userRepository.findByUserCode(userCode).orElseThrow(() -> new UsernameNotFoundException("登录时没有找到用户"));
-
-        return org.springframework.security.core.userdetails.User.withUsername(user.getUsername()).password(user.getPassword()).roles(user.getRole()).build();
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        return new CustomUserDetails(user.getUsername(), user.getPassword(), user.getUserCode(), authorities);
     }
 
     // 管理员根据条件获取学生

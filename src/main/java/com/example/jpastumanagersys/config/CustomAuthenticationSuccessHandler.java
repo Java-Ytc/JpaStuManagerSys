@@ -16,7 +16,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String targetUrl = switch (role) {
             case "ROLE_ADMIN" -> "/admin/dashboard";
             case "ROLE_TEACHER" -> "/teacher/dashboard";
-            case "ROLE_STUDENT" -> "/stu/dashboard";
+            case "ROLE_STUDENT" -> "/student/dashboard";
             default -> "/home";
         };
 

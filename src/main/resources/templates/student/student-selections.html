@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>学生选课记录</title>
+</head>
+<body>
+<h1>学生选课记录</h1>
+<table>
+    <thead>
+    <tr>
+        <th>课程编号</th>
+        <th>课程名称</th>
+        <th>选课日期</th>
+        <th>成绩</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="selection : ${selections}">
+        <td th:text="${selection.course.courseCode}"></td>
+        <td th:text="${selection.course.courseName}"></td>
+        <td th:text="${#dates.format(selection.selectionDate, 'yyyy-MM-dd')}"></td>
+        <td th:text="${selection.score}"></td>
+    </tr>
+    </tbody>
+</table>
+<a href="/student/dashboard">返回学生主页</a>
+</body>
+</html>
