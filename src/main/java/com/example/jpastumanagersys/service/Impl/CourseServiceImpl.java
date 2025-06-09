@@ -96,4 +96,14 @@ public class CourseServiceImpl implements CourseService {
     public Page<Course> getByCourseNameContaining(String courseName, Pageable pageable) {
         return courseRepo.findByCourseNameContaining(courseName, pageable);
     }
+
+    @Override
+    public Page<Course> getUnassignedCourses(Pageable pageable) {
+        return courseRepo.findByTeacherIsNull(pageable);
+    }
+
+    @Override
+    public Page<Course> getByTeacher(User teacher, Pageable pageable) {
+        return courseRepo.findByTeacher(teacher, pageable);
+    }
 }

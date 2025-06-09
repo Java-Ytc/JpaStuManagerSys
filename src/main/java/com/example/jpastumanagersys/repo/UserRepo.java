@@ -28,9 +28,6 @@ public interface UserRepo extends JpaRepository<User, Long> {
     // 根据课程编号查询教师信息
     Page<User> findByCourses_CourseCode(String courseCode, Pageable pageable);
 
-    // 根据用户名和课程编号 联合模糊查询教师信息
-    Page<User> findByUsernameContainingAndCourses_CourseCode(String username, String courseCode, Pageable pageable);
-
     // 查询为分配班级的学生
     Page<User> findByClazzIsNull(Pageable pageable);
 }

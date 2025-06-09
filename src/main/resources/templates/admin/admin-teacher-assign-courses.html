@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign Courses to Teacher</title>
+</head>
+<body>
+<h1>教师分配课程: [[${teacher.username}]]</h1>
+<h2>教师信息</h2>
+<p>教师编号: <span th:text="${teacher.userCode}"></span></p>
+<p>用户名: <span th:text="${teacher.username}"></span></p>
+<p>邮箱: <span th:text="${teacher.email}"></span></p>
+<p>电话: <span th:text="${teacher.phone}"></span></p>
+<p>角色: <span th:text="${teacher.role}"></span></p>
+
+<!-- 批量分配表单 -->
+<form action="#" th:action="@{/admin/teachers/{userCode}/assign-courses-batch(userCode=${teacher.userCode})}" method="post">
+    <table>
+        <thead>
+        <tr>
+            <th>
+                <label for="selectAll">全选</label>
+                <input type="checkbox" id="selectAll"/>
+            </th>
+            <th>课程编号</th>
+            <th>课程名称</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${unassignedCourses}">
+            <td>
+                <label th:for="${'checkbox_' + course.courseCode}">选择</label>
+                <input type="checkbox" id="${'checkbox_' + course.courseCode}" name="courseCodes" th:value="${course.courseCode}"/>
+            </td>
+            <td th:text="${course.courseCode}"></td>
+            <td th:text="${course.courseName}"></td>
+            <td>
+                <!-- 单个分配按钮 -->
+                <button type="submit" formaction="#" th:formaction="@{/admin/teachers/{userCode}/assign-courses-single(userCode=${teacher.userCode}, courseCode=${course.courseCode})}">授课</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit">分配课程</button>
+</form>
+<div>
+    <a th:href="@{/admin/teachers/{userCode}/assign-courses(userCode=${teacher.userCode}, page=${currentPage - 1})}" th:if="${currentPage > 0}">上一页</a>
+    <a th:href="@{/admin/teachers/{userCode}/assign-courses(userCode=${teacher.userCode}, page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">下一页</a>
+</div>
+<script>
+    document.getElementById('selectAll').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('input[name="courseCodes"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.checked = this.checked;
+        });
+    });
+</script>
+</body>
+</html>

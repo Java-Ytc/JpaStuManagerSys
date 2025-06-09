@@ -4,6 +4,7 @@ import com.example.jpastumanagersys.entity.Clazz;
 import com.example.jpastumanagersys.entity.Course;
 import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.repo.ClazzRepo;
+import com.example.jpastumanagersys.repo.CourseRepo;
 import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.UserService;
 import jakarta.transaction.Transactional;
@@ -32,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ClazzRepo clazzRepo;
+
+    @Autowired
+    private CourseRepo courseRepo;
 
     // 注册新用户
     @Override
@@ -185,15 +189,9 @@ public class UserServiceImpl implements UserService {
             } else {
                 allUsersPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
             }
-        } else if ((username != null && !username.isEmpty()) && (courseCode != null && !courseCode.isEmpty())) {
-            // 用户名和课程编号联合查询
-            allUsersPage = userRepository.findByUsernameContainingAndCourses_CourseCode(username, courseCode, pageable);
         } else if (username != null && !username.isEmpty()) {
             // 按用户名查询
             allUsersPage = userRepository.findByUsernameContaining(username, pageable);
-        } else if (courseCode != null && !courseCode.isEmpty()) {
-            // 按课程编号查询
-            allUsersPage = userRepository.findByCourses_CourseCode(courseCode, pageable);
         } else {
             // 查询所有教师
             allUsersPage = userRepository.findAll(pageable);
@@ -266,5 +264,33 @@ public class UserServiceImpl implements UserService {
         currentStudents.addAll(students);
         clazz.setStudents(currentStudents);
         clazzRepo.save(clazz);
+    }
+
+    @Override
+    @Transactional
+    public void assignCoursesToTeacher(String userCode, List<String> courseCodes) {
+        User teacher = userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("没有找到教师"));
+        for (String courseCode : courseCodes) {
+            Course course = courseRepo.findByCourseCode(courseCode).orElseThrow(() -> new IllegalArgumentException("没有找到课程"));
+            course.setTeacher(teacher);
+            teacher.getCourses().add(course);
+            courseRepo.save(course);
+        }
+        userRepository.save(teacher);
+    }
+
+    @Override
+    @Transactional
+    public void dissociateCoursesFromTeacher(String userCode, List<String> courseCodes) {
+        User teacher = userRepository.findByUserCode(userCode).orElseThrow(() -> new IllegalArgumentException("没有找到教师"));
+
+        for (String courseCode : courseCodes) {
+            Course course = courseRepo.findByCourseCode(courseCode).orElseThrow(() -> new IllegalArgumentException("没有找到课程"));
+            teacher.getCourses().remove(course);
+            course.setTeacher(null);
+            courseRepo.save(course);
+        }
+
+        userRepository.save(teacher);
     }
 }

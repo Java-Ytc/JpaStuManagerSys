@@ -43,4 +43,10 @@ public interface UserService extends UserDetailsService {
 
     // 为班级批量分配学生
     void assignStudentsToClass(String userCode, List<String> classCodes);
+
+    // 为老师分配课程
+    void assignCoursesToTeacher(String userCode, List<String> courseCodes);
+
+    // 批量解除课程与教师的关联
+    void dissociateCoursesFromTeacher(String userCode, List<String> courseCodes);
 }

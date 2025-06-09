@@ -116,7 +116,6 @@ public class AdminController {
     @GetMapping("/teachers")
     public String listTeachers(@RequestParam(required = false) String userCode,
                                @RequestParam(required = false) String username,
-                               @RequestParam(required = false) String courseCode,
                                @RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "10") int size,
                                Model model) {
@@ -124,16 +123,19 @@ public class AdminController {
         if (userCode != null && !userCode.isEmpty()) {
             // 若教师编号存在，则仅按教师编号查询
             teacherPage = userService.getTeachersByCondition(userCode, null, null, PageRequest.of(page, size));
+        } else if (username != null && !username.isEmpty()) {
+            // 按用户名查询
+            teacherPage = userService.getTeachersByCondition(null, username, null, PageRequest.of(page, size));
         } else {
-            // 否则，根据用户名、课程编号或联合查询
-            teacherPage = userService.getTeachersByCondition(null, username, courseCode, PageRequest.of(page, size));
+            // 查询所有教师
+            teacherPage = userService.getTeachersByCondition(null, null, null, PageRequest.of(page, size));
         }
         model.addAttribute("teachers", teacherPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", teacherPage.getTotalPages());
         // 检查是否有教师数据
         if (teacherPage.isEmpty()) {
-            model.addAttribute("noTeachersMessage", "No teachers found.");
+            model.addAttribute("noTeachersMessage", "没有老师数据");
         }
         return "/admin/admin-teacher-list";
     }
@@ -283,6 +285,7 @@ public class AdminController {
     // 保存新添加的课程信息
     @PostMapping("/courses/save")
     public String saveCourse(@ModelAttribute Course course) {
+        course.setCurrentStudents(0); // 设置默认当前学生数为0
         courseService.saveCourse(course);
         return "redirect:/admin/courses";
     }
@@ -330,5 +333,63 @@ public class AdminController {
                                         @RequestParam List<String> userCodes) {
         userService.assignStudentsToClass(classCode, userCodes);
         return "redirect:/admin/classes";
+    }
+
+    // 显示为老师分配课程的页面
+    @GetMapping("/teachers/{userCode}/assign-courses")
+    public String showAssignCoursesPage(@PathVariable String userCode,
+                                        @RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        Model model) {
+        // 获取老师信息
+        User teacher = userService.getByUserCode(userCode);
+        model.addAttribute("teacher", teacher);
+
+        // 获取未分配的课程，支持分页查询
+        Page<Course> unassignedCourses = courseService.getUnassignedCourses(PageRequest.of(page, size));
+        model.addAttribute("unassignedCourses", unassignedCourses.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", unassignedCourses.getTotalPages());
+
+        return "/admin/admin-teacher-assign-courses";
+    }
+
+    // 处理单个课程分配请求
+    @PostMapping("/teachers/{userCode}/assign-courses-single")
+    public String assignSingleCourseToTeacher(@PathVariable String userCode, @RequestParam String courseCode) {
+        userService.assignCoursesToTeacher(userCode, Collections.singletonList(courseCode));
+        return "redirect:/admin/teachers/detail/" + userCode;
+    }
+
+    // 处理批量课程分配请求
+    @PostMapping("/teachers/{userCode}/assign-courses-batch")
+    public String assignCoursesToTeacher(@PathVariable String userCode, @RequestParam List<String> courseCodes) {
+        userService.assignCoursesToTeacher(userCode, courseCodes);
+        return "redirect:/admin/teachers/detail/" + userCode;
+    }
+
+    // 批量解除课程关联
+    @PostMapping("/teachers/{userCode}/dissociate-courses")
+    public String dissociateCourses(@PathVariable String userCode,
+                                    @RequestParam List<String> courseCodes,
+                                    @RequestParam(defaultValue = "0") int page) {
+        userService.dissociateCoursesFromTeacher(userCode, courseCodes);
+        return "redirect:/admin/teachers/detail/"+userCode;
+    }
+
+    // 显示教师详细信息页面
+    @GetMapping("/teachers/detail/{userCode}")
+    public String showTeacherDetails(@PathVariable String userCode,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size,
+                                     Model model) {
+        User teacher = userService.getByUserCode(userCode);
+        Page<Course> courses = courseService.getByTeacher(teacher, PageRequest.of(page, size)); // 获取该教师教授的课程
+
+        model.addAttribute("teacher", teacher);
+        model.addAttribute("courses", courses.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", courses.getTotalPages());
+        return "/admin/admin-teacher-detail";
     }
 }

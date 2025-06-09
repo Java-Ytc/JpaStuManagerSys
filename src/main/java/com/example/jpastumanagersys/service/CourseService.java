@@ -1,6 +1,7 @@
 package com.example.jpastumanagersys.service;
 
 import com.example.jpastumanagersys.entity.Course;
+import com.example.jpastumanagersys.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,4 +28,10 @@ public interface CourseService {
 
     // 根据课程名称获取课程信息
     Page<Course> getByCourseNameContaining(String courseName, Pageable pageable);
+
+    // 获取未分配的课程
+    Page<Course> getUnassignedCourses(Pageable pageable);
+
+    // 分页获取老师关联的课程
+    Page<Course> getByTeacher(User teacher, Pageable pageable);
 }
