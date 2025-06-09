@@ -1,6 +1,7 @@
 package com.example.jpastumanagersys.service.Impl;
 
 import com.example.jpastumanagersys.entity.LeaveApplication;
+import com.example.jpastumanagersys.entity.LeaveStatus;
 import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.repo.LeaveApplicationRepo;
 import com.example.jpastumanagersys.repo.UserRepo;
@@ -30,7 +31,8 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
         leaveApplication.setStartDate(startDate);
         leaveApplication.setEndDate(endDate);
         leaveApplication.setReason(reason);
-        leaveApplication.setApproved(false);
+        // 默认状态为待审核
+        leaveApplication.setStatus(LeaveStatus.PENDING);
 
         return leaveApplicationRepo.save(leaveApplication);
     }

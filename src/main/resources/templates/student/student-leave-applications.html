@@ -12,6 +12,7 @@
     <th>开始日期</th>
     <th>结束日期</th>
     <th>请假原因</th>
+    <th>状态</th> <!-- 添加状态列 -->
   </tr>
   </thead>
   <tbody>
@@ -19,6 +20,8 @@
     <td th:text="${#temporals.format(leaveApplication.startDate, 'yyyy-MM-dd')}"></td>
     <td th:text="${#temporals.format(leaveApplication.endDate, 'yyyy-MM-dd')}"></td>
     <td th:text="${leaveApplication.reason}"></td>
+    <!-- 根据状态显示相应的文本 -->
+    <td th:text="${leaveApplication.status.name() == 'PENDING' ? '待审核' : (leaveApplication.status.name() == 'APPROVED' ? '批准' : '拒绝')}"></td>
   </tr>
   </tbody>
 </table>

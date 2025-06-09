@@ -21,5 +21,7 @@ public class LeaveApplication {
     private LocalDate startDate;
     private LocalDate endDate;
     private String reason;
-    private boolean approved;
+
+    @Enumerated(EnumType.STRING)
+    private LeaveStatus status;
 }
