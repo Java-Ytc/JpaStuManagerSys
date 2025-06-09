@@ -312,6 +312,22 @@ public class AdminController {
         return "redirect:/admin/courses";
     }
 
+    // 显示教师详细信息页面
+    @GetMapping("/teachers/detail/{userCode}")
+    public String showTeacherDetails(@PathVariable String userCode,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size,
+                                     Model model) {
+        User teacher = userService.getByUserCode(userCode);
+        Page<Course> courses = courseService.getByTeacher(teacher, PageRequest.of(page, size)); // 获取该教师教授的课程
+
+        model.addAttribute("teacher", teacher);
+        model.addAttribute("courses", courses.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", courses.getTotalPages());
+        return "/admin/admin-teacher-detail";
+    }
+
     // 显示为班级分配学生的页面
     @GetMapping("/classes/{classCode}/assign-students")
     public String showAssignStudentsPage(@PathVariable String classCode,
@@ -374,21 +390,5 @@ public class AdminController {
                                     @RequestParam List<String> courseCodes) {
         userService.dissociateCoursesFromTeacher(userCode, courseCodes);
         return "redirect:/admin/teachers/detail/"+userCode;
-    }
-
-    // 显示教师详细信息页面
-    @GetMapping("/teachers/detail/{userCode}")
-    public String showTeacherDetails(@PathVariable String userCode,
-                                     @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size,
-                                     Model model) {
-        User teacher = userService.getByUserCode(userCode);
-        Page<Course> courses = courseService.getByTeacher(teacher, PageRequest.of(page, size)); // 获取该教师教授的课程
-
-        model.addAttribute("teacher", teacher);
-        model.addAttribute("courses", courses.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", courses.getTotalPages());
-        return "/admin/admin-teacher-detail";
     }
 }
