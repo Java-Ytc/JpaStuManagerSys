@@ -368,11 +368,10 @@ public class AdminController {
         return "redirect:/admin/teachers/detail/" + userCode;
     }
 
-    // 批量解除课程关联
+    // 解除教师和课程关联
     @PostMapping("/teachers/{userCode}/dissociate-courses")
     public String dissociateCourses(@PathVariable String userCode,
-                                    @RequestParam List<String> courseCodes,
-                                    @RequestParam(defaultValue = "0") int page) {
+                                    @RequestParam List<String> courseCodes) {
         userService.dissociateCoursesFromTeacher(userCode, courseCodes);
         return "redirect:/admin/teachers/detail/"+userCode;
     }

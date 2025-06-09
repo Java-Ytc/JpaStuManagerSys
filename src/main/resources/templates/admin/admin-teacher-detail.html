@@ -35,16 +35,10 @@
       </td>
       <td th:text="${course.courseCode}"></td>
       <td th:text="${course.courseName}"></td>
-      <td>
-        <form action="#" th:action="@{/admin/teachers/{userCode}/dissociate-courses(userCode=${teacher.userCode})}" method="post">
-          <input type="hidden" name="courseCodes" th:value="${course.courseCode}"/>
-          <button type="submit">退课</button>
-        </form>
-      </td>
     </tr>
     </tbody>
   </table>
-  <button type="submit">批量解除关联</button>
+  <button type="submit">退课</button>
 </form>
 <div>
   <a href="/admin/teachers">返回教师列表</a>
