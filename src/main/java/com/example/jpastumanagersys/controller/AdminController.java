@@ -41,6 +41,8 @@ public class AdminController {
         return "/admin/admin-dashboard";
     }
 
+    /*------------------------------------------管理学生模块---------------------------------------*/
+
     // 显示学生列表页面
     @GetMapping("/students")
     public String listStudents(@RequestParam(required = false) String userCode,
@@ -113,6 +115,8 @@ public class AdminController {
         return "redirect:/admin/students";
     }
 
+    /*-----------------------------------------------管理教师模块-------------------------------------------------*/
+    // 显示教师列表
     @GetMapping("/teachers")
     public String listTeachers(@RequestParam(required = false) String userCode,
                                @RequestParam(required = false) String username,
@@ -177,6 +181,64 @@ public class AdminController {
         return "redirect:/admin/teachers";
     }
 
+    // 显示教师详细信息页面
+    @GetMapping("/teachers/detail/{userCode}")
+    public String showTeacherDetails(@PathVariable String userCode,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "10") int size,
+                                     Model model) {
+        User teacher = userService.getByUserCode(userCode);
+        Page<Course> courses = courseService.getByTeacher(teacher, PageRequest.of(page, size)); // 获取该教师教授的课程
+
+        model.addAttribute("teacher", teacher);
+        model.addAttribute("courses", courses.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", courses.getTotalPages());
+        return "/admin/admin-teacher-detail";
+    }
+
+    // 显示为老师分配课程的页面
+    @GetMapping("/teachers/{userCode}/assign-courses")
+    public String showAssignCoursesPage(@PathVariable String userCode,
+                                        @RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        Model model) {
+        // 获取老师信息
+        User teacher = userService.getByUserCode(userCode);
+        model.addAttribute("teacher", teacher);
+
+        // 获取未分配的课程，支持分页查询
+        Page<Course> unassignedCourses = courseService.getUnassignedCourses(PageRequest.of(page, size));
+        model.addAttribute("unassignedCourses", unassignedCourses.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", unassignedCourses.getTotalPages());
+
+        return "/admin/admin-teacher-assign-courses";
+    }
+
+    // 处理单个课程分配请求
+    @PostMapping("/teachers/{userCode}/assign-courses-single")
+    public String assignSingleCourseToTeacher(@PathVariable String userCode, @RequestParam String courseCode) {
+        userService.assignCoursesToTeacher(userCode, Collections.singletonList(courseCode));
+        return "redirect:/admin/teachers/detail/" + userCode;
+    }
+
+    // 处理批量课程分配请求
+    @PostMapping("/teachers/{userCode}/assign-courses-batch")
+    public String assignCoursesToTeacher(@PathVariable String userCode, @RequestParam List<String> courseCodes) {
+        userService.assignCoursesToTeacher(userCode, courseCodes);
+        return "redirect:/admin/teachers/detail/" + userCode;
+    }
+
+    // 解除教师和课程关联
+    @PostMapping("/teachers/{userCode}/dissociate-courses")
+    public String dissociateCourses(@PathVariable String userCode,
+                                    @RequestParam List<String> courseCodes) {
+        userService.dissociateCoursesFromTeacher(userCode, courseCodes);
+        return "redirect:/admin/teachers/detail/"+userCode;
+    }
+
+    /*------------------------------------------------管理班级模块------------------------------------------*/
     // 显示班级列表页面，支持查询功能
     @GetMapping("/classes")
     public String listClasses(@RequestParam(required = false) String classCode,
@@ -244,6 +306,30 @@ public class AdminController {
         return "redirect:/admin/classes";
     }
 
+    // 显示为班级分配学生的页面
+    @GetMapping("/classes/{classCode}/assign-students")
+    public String showAssignStudentsPage(@PathVariable String classCode,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size,
+                                         Model model) {
+        Clazz clazz = clazzService.getByClassCode(classCode);
+        Page<User> unassignedStudents = userService.getUnassignedStudents(PageRequest.of(page, size));
+        model.addAttribute("clazz", clazz);
+        model.addAttribute("unassignedStudents", unassignedStudents.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", unassignedStudents.getTotalPages());
+        return "/admin/admin-class-assign-students";
+    }
+
+    // 处理为班级批量分配学生的请求
+    @PostMapping("/classes/{classCode}/assign-students")
+    public String assignStudentsToClass(@PathVariable String classCode,
+                                        @RequestParam List<String> userCodes) {
+        userService.assignStudentsToClass(classCode, userCodes);
+        return "redirect:/admin/classes";
+    }
+
+    /*--------------------------------------------管理课程模块--------------------------------------------*/
     // 显示课程列表页面，支持查询功能
     @GetMapping("/courses")
     public String listCourses(@RequestParam(required = false) String courseCode,
@@ -310,85 +396,5 @@ public class AdminController {
     public String deleteCourse(@RequestParam List<String> courseCodes) {
         courseService.deleteByCourseCodes(courseCodes);
         return "redirect:/admin/courses";
-    }
-
-    // 显示为班级分配学生的页面
-    @GetMapping("/classes/{classCode}/assign-students")
-    public String showAssignStudentsPage(@PathVariable String classCode,
-                                         @RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size,
-                                         Model model) {
-        Clazz clazz = clazzService.getByClassCode(classCode);
-        Page<User> unassignedStudents = userService.getUnassignedStudents(PageRequest.of(page, size));
-        model.addAttribute("clazz", clazz);
-        model.addAttribute("unassignedStudents", unassignedStudents.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", unassignedStudents.getTotalPages());
-        return "/admin/admin-class-assign-students";
-    }
-
-    // 处理为班级批量分配学生的请求
-    @PostMapping("/classes/{classCode}/assign-students")
-    public String assignStudentsToClass(@PathVariable String classCode,
-                                        @RequestParam List<String> userCodes) {
-        userService.assignStudentsToClass(classCode, userCodes);
-        return "redirect:/admin/classes";
-    }
-
-    // 显示教师详细信息页面
-    @GetMapping("/teachers/detail/{userCode}")
-    public String showTeacherDetails(@PathVariable String userCode,
-                                     @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size,
-                                     Model model) {
-        User teacher = userService.getByUserCode(userCode);
-        Page<Course> courses = courseService.getByTeacher(teacher, PageRequest.of(page, size)); // 获取该教师教授的课程
-
-        model.addAttribute("teacher", teacher);
-        model.addAttribute("courses", courses.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", courses.getTotalPages());
-        return "/admin/admin-teacher-detail";
-    }
-
-    // 显示为老师分配课程的页面
-    @GetMapping("/teachers/{userCode}/assign-courses")
-    public String showAssignCoursesPage(@PathVariable String userCode,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size,
-                                        Model model) {
-        // 获取老师信息
-        User teacher = userService.getByUserCode(userCode);
-        model.addAttribute("teacher", teacher);
-
-        // 获取未分配的课程，支持分页查询
-        Page<Course> unassignedCourses = courseService.getUnassignedCourses(PageRequest.of(page, size));
-        model.addAttribute("unassignedCourses", unassignedCourses.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", unassignedCourses.getTotalPages());
-
-        return "/admin/admin-teacher-assign-courses";
-    }
-
-    // 处理单个课程分配请求
-    @PostMapping("/teachers/{userCode}/assign-courses-single")
-    public String assignSingleCourseToTeacher(@PathVariable String userCode, @RequestParam String courseCode) {
-        userService.assignCoursesToTeacher(userCode, Collections.singletonList(courseCode));
-        return "redirect:/admin/teachers/detail/" + userCode;
-    }
-
-    // 处理批量课程分配请求
-    @PostMapping("/teachers/{userCode}/assign-courses-batch")
-    public String assignCoursesToTeacher(@PathVariable String userCode, @RequestParam List<String> courseCodes) {
-        userService.assignCoursesToTeacher(userCode, courseCodes);
-        return "redirect:/admin/teachers/detail/" + userCode;
-    }
-
-    // 解除教师和课程关联
-    @PostMapping("/teachers/{userCode}/dissociate-courses")
-    public String dissociateCourses(@PathVariable String userCode,
-                                    @RequestParam List<String> courseCodes) {
-        userService.dissociateCoursesFromTeacher(userCode, courseCodes);
-        return "redirect:/admin/teachers/detail/"+userCode;
     }
 }
