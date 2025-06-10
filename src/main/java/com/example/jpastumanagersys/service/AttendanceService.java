@@ -16,4 +16,6 @@ public interface AttendanceService {
     Page<Attendance> getAttendanceByCourse(Long courseId, Pageable pageable);
 
     void deleteAttendance(Long id);
+
+    List<Attendance> getAttendanceByStudentAndCourse(Long studentId, Long courseId);
 }

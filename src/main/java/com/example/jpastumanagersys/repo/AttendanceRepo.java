@@ -15,4 +15,7 @@ public interface AttendanceRepo extends JpaRepository<Attendance, Long> {
     List<Attendance> findByCourse(Course course);
 
     Page<Attendance> findByCourse(Course course, Pageable pageable); // 添加这个方法
+
+    // 根据学生和课程以及出勤状态查询缺课记录
+    List<Attendance> findByStudentAndCourseAndIsPresentFalse(User student, Course course);
 }

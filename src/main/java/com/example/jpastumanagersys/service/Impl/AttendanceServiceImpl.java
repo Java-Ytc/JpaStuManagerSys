@@ -28,9 +28,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public Attendance recordAttendance(Long studentId, Long courseId, boolean isPresent) {
-        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("无法通过学生ID找到学生"));
 
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("无法通过课程ID找到课程"));
 
         Attendance attendance = new Attendance();
         attendance.setStudent(student);
@@ -43,14 +43,14 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public List<Attendance> getAttendanceByStudent(Long studentId) {
-        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("无法通过学生ID找到学生"));
 
         return attendanceRepository.findByStudent(student);
     }
 
     @Override
     public List<Attendance> getAttendanceByCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("无法通过课程ID找到课程"));
 
         return attendanceRepository.findByCourse(course);
     }
@@ -66,4 +66,13 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void deleteAttendance(Long id) {
         attendanceRepository.deleteById(id);
     }
+
+    @Override
+    public List<Attendance> getAttendanceByStudentAndCourse(Long studentId, Long courseId) {
+        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("无法通过学生ID找到学生"));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("无法通过课程ID找到课程"));
+
+        return attendanceRepository.findByStudentAndCourseAndIsPresentFalse(student, course);
+    }
+
 }

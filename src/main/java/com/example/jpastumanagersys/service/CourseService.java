@@ -34,4 +34,7 @@ public interface CourseService {
 
     // 分页获取老师关联的课程
     Page<Course> getByTeacher(User teacher, Pageable pageable);
+
+    // 根据课程编号获取课程
+    Course getById(Long id);
 }

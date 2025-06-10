@@ -15,7 +15,7 @@ public interface CourseSelectionRepo extends JpaRepository<CourseSelection, Long
 
     Optional<CourseSelection> findByStudentIdAndCourseId(Long studentId, Long courseId);
 
-    Page<CourseSelection> findByStudent(User student, Pageable pageable); // 添加这个方法
+    Page<CourseSelection> findByStudent(User student, Pageable pageable);
 
-    List<CourseSelection> findByCourse(Course course); // 你之前假设需要添加的方法，这里也保留
+    List<CourseSelection> findByCourse(Course course);
 }

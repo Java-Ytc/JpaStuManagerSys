@@ -70,14 +70,14 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
     @Override
     public List<CourseSelection> getSelectionsByStudent(Long studentId) {
-        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("无法通过ID获取学生"));
 
         return selectionRepository.findByStudent(student);
     }
 
     @Override
     public Page<CourseSelection> getSelectionsByStudent(Long studentId, Pageable pageable) {
-        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
+        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("无法通过ID获取学生"));
 
         return selectionRepository.findByStudent(student, pageable);
     }
@@ -89,7 +89,7 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
     @Override
     public CourseSelection updateScore(Long selectionId, Double score) {
-        CourseSelection selection = selectionRepository.findById(selectionId).orElseThrow(() -> new IllegalArgumentException("Course selection not found"));
+        CourseSelection selection = selectionRepository.findById(selectionId).orElseThrow(() -> new IllegalArgumentException("无法通过ID获取选课信息"));
 
         selection.setScore(score);
         return selectionRepository.save(selection);
@@ -97,7 +97,12 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
     @Override
     public List<CourseSelection> getSelectionsByCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("无法通过ID获取课程"));
         return selectionRepository.findByCourse(course);
+    }
+
+    @Override
+    public CourseSelection getById(Long id) {
+        return selectionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Course selection not found"));
     }
 }

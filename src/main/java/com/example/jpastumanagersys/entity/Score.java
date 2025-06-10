@@ -3,6 +3,8 @@ package com.example.jpastumanagersys.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
+
 @Entity
 @Data
 @Table(name = "scores")
@@ -22,4 +24,12 @@ public class Score {
     private Course course;
 
     private Double score;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date scoreDate;
+
+    @PrePersist
+    protected void onCreate() {
+        scoreDate = new Date();
+    }
 }

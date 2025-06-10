@@ -21,4 +21,6 @@ public interface CourseSelectionService {
 
     // 添加新方法
     List<CourseSelection> getSelectionsByCourse(Long courseId);
+
+    CourseSelection getById(Long id);
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>教师主页</title>
+</head>
+<body>
+<h1>欢迎，[[${teacher.username}]]</h1>
+<p>编号: [[${teacher.userCode}]]</p>
+<p>邮箱: [[${teacher.email}]]</p>
+<p>电话: [[${teacher.phone}]]</p>
+
+<h2>您所教授的课程</h2>
+<table>
+    <thead>
+    <tr>
+        <th>课程编号</th>
+        <th>课程名称</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${courses}">
+        <td>[[${course.courseCode}]]</td>
+        <td>[[${course.courseName}]]</td>
+        <td><a th:href="@{/teacher/course/detail/{courseCode}/{courseId}(courseCode=${course.courseCode}, courseId=${course.id})}">详细</a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

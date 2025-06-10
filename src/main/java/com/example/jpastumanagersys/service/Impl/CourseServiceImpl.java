@@ -106,4 +106,9 @@ public class CourseServiceImpl implements CourseService {
     public Page<Course> getByTeacher(User teacher, Pageable pageable) {
         return courseRepo.findByTeacher(teacher, pageable);
     }
+
+    @Override
+    public Course getById(Long id) {
+        return courseRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("无法根据课程ID获取课程"));
+    }
 }
