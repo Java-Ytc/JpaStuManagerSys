@@ -13,6 +13,9 @@
 <p>电话: <span th:text="${teacher.phone}"></span></p>
 <p>角色: <span th:text="${teacher.role}"></span></p>
 
+<!-- 返回教师列表的链接 -->
+<a href="/admin/teachers">返回教师列表</a>
+
 <!-- 批量分配表单 -->
 <form action="#" th:action="@{/admin/teachers/{userCode}/assign-courses-batch(userCode=${teacher.userCode})}" method="post">
     <table>
