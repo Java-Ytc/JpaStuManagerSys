@@ -48,4 +48,31 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
         User student = userRepo.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
         return leaveApplicationRepo.findByStudent(student, pageable);
     }
+
+    @Override
+    public LeaveApplication approveLeave(Long leaveId, Long approverId) {
+        LeaveApplication leaveApplication = leaveApplicationRepo.findById(leaveId)
+                .orElseThrow(() -> new IllegalArgumentException("未找到请假申请"));
+        User approver = userRepo.findById(approverId)
+                .orElseThrow(() -> new IllegalArgumentException("未找到审批人"));
+        leaveApplication.setStatus(LeaveStatus.APPROVED);
+        leaveApplication.setApprover(approver);
+        return leaveApplicationRepo.save(leaveApplication);
+    }
+
+    @Override
+    public LeaveApplication rejectLeave(Long leaveId, Long approverId) {
+        LeaveApplication leaveApplication = leaveApplicationRepo.findById(leaveId)
+                .orElseThrow(() -> new IllegalArgumentException("未找到请假申请"));
+        User approver = userRepo.findById(approverId)
+                .orElseThrow(() -> new IllegalArgumentException("未找到审批人"));
+        leaveApplication.setStatus(LeaveStatus.REJECTED);
+        leaveApplication.setApprover(approver);
+        return leaveApplicationRepo.save(leaveApplication);
+    }
+
+    @Override
+    public List<LeaveApplication> getPendingLeaveApplications() {
+        return leaveApplicationRepo.findByStatus(LeaveStatus.PENDING);
+    }
 }

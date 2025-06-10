@@ -1,14 +1,13 @@
 package com.example.jpastumanagersys.controller;
 
-import com.example.jpastumanagersys.config.CustomUserDetails;
 import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.jpastumanagersys.util.UserCodeUtils.getCurrentUserCode;
 
 @Controller
 @RequestMapping("/user")
@@ -66,11 +65,5 @@ public class UserController {
             // 修改失败，返回修改密码表单页面
             return "/user/change-password-form";
         }
-    }
-
-    private String getCurrentUserCode() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            return customUserDetails.getUserCode();
     }
 }

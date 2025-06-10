@@ -166,7 +166,7 @@ public class UserServiceImpl implements UserService {
         } else {
             // 查询所有学生
             allUsersPage = userRepository.findAll(pageable);
-            System.out.println("查询所有学生的用户数量：" + allUsersPage.getContent().size());
+            System.out.println("查询所有的用户数量：" + allUsersPage.getContent().size());
         }
 
         // 过滤出角色为 STUDENT 的用户
@@ -198,6 +198,7 @@ public class UserServiceImpl implements UserService {
         } else {
             // 查询所有教师
             allUsersPage = userRepository.findAll(pageable);
+            System.out.println("查询所有的用户数量" + allUsersPage.getContent().size());
         }
 
         // 过滤出角色为TEACHER的用户

@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.example.jpastumanagersys.util.UserCodeUtils.getCurrentUserCode;
+
 @Controller
 @RequestMapping("/student")
 public class StudentController {
@@ -74,9 +76,7 @@ public class StudentController {
      */
     @GetMapping("/selections")
     public String getStudentSelections(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String userCode = customUserDetails.getUserCode();
+        String userCode = getCurrentUserCode();
         Long studentId = userService.getByUserCode(userCode).getId();
 
         List<CourseSelection> selections = selectionService.getSelectionsByStudent(studentId);
@@ -112,9 +112,7 @@ public class StudentController {
      */
     @PostMapping("/select-course")
     public String selectCourse(@RequestParam Long courseId, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String userCode = customUserDetails.getUserCode();
+        String userCode = getCurrentUserCode();
         Long studentId = userService.getByUserCode(userCode).getId();
 
         try {
@@ -154,9 +152,7 @@ public class StudentController {
     public String applyLeave(@RequestParam LocalDate startDate,
                              @RequestParam LocalDate endDate,
                              @RequestParam String reason, Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String userCode = customUserDetails.getUserCode();
+        String userCode = getCurrentUserCode();
         Long studentId = userService.getByUserCode(userCode).getId();
 
         try {
@@ -178,9 +174,7 @@ public class StudentController {
      */
     @GetMapping("/leave-applications")
     public String getLeaveApplications(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String userCode = customUserDetails.getUserCode();
+        String userCode = getCurrentUserCode();
         Long studentId = userService.getByUserCode(userCode).getId();
 
         List<LeaveApplication> leaveApplications = leaveApplicationService.getLeaveApplicationsByStudent(studentId);

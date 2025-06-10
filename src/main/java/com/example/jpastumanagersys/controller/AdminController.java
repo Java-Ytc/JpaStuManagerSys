@@ -2,9 +2,11 @@ package com.example.jpastumanagersys.controller;
 
 import com.example.jpastumanagersys.entity.Clazz;
 import com.example.jpastumanagersys.entity.Course;
+import com.example.jpastumanagersys.entity.LeaveApplication;
 import com.example.jpastumanagersys.entity.User;
 import com.example.jpastumanagersys.service.ClazzService;
 import com.example.jpastumanagersys.service.CourseService;
+import com.example.jpastumanagersys.service.LeaveApplicationService;
 import com.example.jpastumanagersys.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.example.jpastumanagersys.util.UserCodeUtils.getCurrentUserCode;
 
 @Controller
 @RequestMapping("/admin")
@@ -29,6 +33,9 @@ public class AdminController {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private LeaveApplicationService leaveApplicationService;
+
     @GetMapping("/dashboard")
     public String adminDashboard(Model model) {
         long totalStudents = userService.getAllUsers().stream().filter(user -> "STUDENT".equals(user.getRole())).count();
@@ -41,19 +48,14 @@ public class AdminController {
         return "/admin/admin-dashboard";
     }
 
-    /*------------------------------------------管理学生模块---------------------------------------*/
+    /*------------------------------------------学生模块---------------------------------------*/
 
     // 显示学生列表页面
     @GetMapping("/students")
-    public String listStudents(@RequestParam(required = false) String userCode,
-                               @RequestParam(required = false) String username,
-                               @RequestParam(required = false) String classCode,
-                               @RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "10") int size,
-                               Model model) {
+    public String listStudents(@RequestParam(required = false) String userCode, @RequestParam(required = false) String username, @RequestParam(required = false) String classCode, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
 
-        System.out.println("学生编号："+userCode);
-        System.out.println("用户名："+username);
+        System.out.println("学生编号：" + userCode);
+        System.out.println("用户名：" + username);
         System.out.println("接收到的班级编号：" + classCode);
 
         Page<User> studentPage;
@@ -65,7 +67,7 @@ public class AdminController {
             studentPage = userService.getStudentsByCondition(null, username, classCode, PageRequest.of(page, size));
         }
 
-        System.out.println("查询到的学生数量："+studentPage.getContent().size());
+        System.out.println("查询到的学生数量：" + studentPage.getContent().size());
 
         model.addAttribute("students", studentPage.getContent());
         model.addAttribute("currentPage", page);
@@ -115,14 +117,12 @@ public class AdminController {
         return "redirect:/admin/students";
     }
 
-    /*-----------------------------------------------管理教师模块-------------------------------------------------*/
+    /*-----------------------------------------------教师模块-------------------------------------------------*/
     // 显示教师列表
     @GetMapping("/teachers")
-    public String listTeachers(@RequestParam(required = false) String userCode,
-                               @RequestParam(required = false) String username,
-                               @RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "10") int size,
-                               Model model) {
+    public String listTeachers(@RequestParam(required = false) String userCode, @RequestParam(required = false) String username, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+        System.out.println("用户编号" + userCode);
+        System.out.println("用户名" + username);
         Page<User> teacherPage;
         if (userCode != null && !userCode.isEmpty()) {
             // 若教师编号存在，则仅按教师编号查询
@@ -183,10 +183,7 @@ public class AdminController {
 
     // 显示教师详细信息页面
     @GetMapping("/teachers/detail/{userCode}")
-    public String showTeacherDetails(@PathVariable String userCode,
-                                     @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size,
-                                     Model model) {
+    public String showTeacherDetails(@PathVariable String userCode, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
         User teacher = userService.getByUserCode(userCode);
         Page<Course> courses = courseService.getByTeacher(teacher, PageRequest.of(page, size)); // 获取该教师教授的课程
 
@@ -199,10 +196,7 @@ public class AdminController {
 
     // 显示为老师分配课程的页面
     @GetMapping("/teachers/{userCode}/assign-courses")
-    public String showAssignCoursesPage(@PathVariable String userCode,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size,
-                                        Model model) {
+    public String showAssignCoursesPage(@PathVariable String userCode, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
         // 获取老师信息
         User teacher = userService.getByUserCode(userCode);
         model.addAttribute("teacher", teacher);
@@ -232,20 +226,15 @@ public class AdminController {
 
     // 解除教师和课程关联
     @PostMapping("/teachers/{userCode}/dissociate-courses")
-    public String dissociateCourses(@PathVariable String userCode,
-                                    @RequestParam List<String> courseCodes) {
+    public String dissociateCourses(@PathVariable String userCode, @RequestParam List<String> courseCodes) {
         userService.dissociateCoursesFromTeacher(userCode, courseCodes);
-        return "redirect:/admin/teachers/detail/"+userCode;
+        return "redirect:/admin/teachers/detail/" + userCode;
     }
 
-    /*------------------------------------------------管理班级模块------------------------------------------*/
+    /*------------------------------------------------班级模块------------------------------------------*/
     // 显示班级列表页面，支持查询功能
     @GetMapping("/classes")
-    public String listClasses(@RequestParam(required = false) String classCode,
-                              @RequestParam(required = false) String className,
-                              @RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size,
-                              Model model) {
+    public String listClasses(@RequestParam(required = false) String classCode, @RequestParam(required = false) String className, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
 
         Page<Clazz> clazzPage;
         if (classCode != null && !classCode.isEmpty()) {
@@ -308,10 +297,7 @@ public class AdminController {
 
     // 显示为班级分配学生的页面
     @GetMapping("/classes/{classCode}/assign-students")
-    public String showAssignStudentsPage(@PathVariable String classCode,
-                                         @RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size,
-                                         Model model) {
+    public String showAssignStudentsPage(@PathVariable String classCode, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
         Clazz clazz = clazzService.getByClassCode(classCode);
         Page<User> unassignedStudents = userService.getUnassignedStudents(PageRequest.of(page, size));
         model.addAttribute("clazz", clazz);
@@ -323,20 +309,15 @@ public class AdminController {
 
     // 处理为班级批量分配学生的请求
     @PostMapping("/classes/{classCode}/assign-students")
-    public String assignStudentsToClass(@PathVariable String classCode,
-                                        @RequestParam List<String> userCodes) {
+    public String assignStudentsToClass(@PathVariable String classCode, @RequestParam List<String> userCodes) {
         userService.assignStudentsToClass(classCode, userCodes);
         return "redirect:/admin/classes";
     }
 
-    /*--------------------------------------------管理课程模块--------------------------------------------*/
+    /*--------------------------------------------课程模块--------------------------------------------*/
     // 显示课程列表页面，支持查询功能
     @GetMapping("/courses")
-    public String listCourses(@RequestParam(required = false) String courseCode,
-                              @RequestParam(required = false) String courseName,
-                              @RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "10") int size,
-                              Model model) {
+    public String listCourses(@RequestParam(required = false) String courseCode, @RequestParam(required = false) String courseName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
 
         Page<Course> coursePage;
         if (courseCode != null && !courseCode.isEmpty()) {
@@ -396,5 +377,42 @@ public class AdminController {
     public String deleteCourse(@RequestParam List<String> courseCodes) {
         courseService.deleteByCourseCodes(courseCodes);
         return "redirect:/admin/courses";
+    }
+
+    /*-----------------------------------请假审批--------------------------------*/
+    // 显示待审批的请假申请列表
+    @GetMapping("/leave-applications/pending")
+    public String showPendingLeaveApplications(Model model) {
+        List<LeaveApplication> pendingApplications = leaveApplicationService.getPendingLeaveApplications();
+        model.addAttribute("pendingApplications", pendingApplications);
+        return "/admin/admin-pending-leave-applications";
+    }
+
+    // 批准请假申请
+    @PostMapping("/leave-applications/{leaveId}/approve")
+    public String approveLeave(@PathVariable Long leaveId, Model model) {
+        String approverCode = getCurrentUserCode();
+        Long approverId = userService.getByUserCode(approverCode).getId();
+        try {
+            leaveApplicationService.approveLeave(leaveId, approverId);
+            model.addAttribute("message", "请假申请已批准");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/leave-applications/pending";
+    }
+
+    // 拒绝请假申请
+    @PostMapping("/leave-applications/{leaveId}/reject")
+    public String rejectLeave(@PathVariable Long leaveId, Model model) {
+        String approverCode = getCurrentUserCode();
+        Long approverId = userService.getByUserCode(approverCode).getId();
+        try {
+            leaveApplicationService.rejectLeave(leaveId, approverId);
+            model.addAttribute("message", "请假申请已拒绝");
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/leave-applications/pending";
     }
 }

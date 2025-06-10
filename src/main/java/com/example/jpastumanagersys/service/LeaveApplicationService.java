@@ -11,4 +11,7 @@ public interface LeaveApplicationService {
     LeaveApplication applyForLeave(Long studentId, LocalDate startDate, LocalDate endDate, String reason);
     List<LeaveApplication> getLeaveApplicationsByStudent(Long studentId);
     Page<LeaveApplication> getLeaveApplicationsByStudent(Long studentId, Pageable pageable);
+    LeaveApplication approveLeave(Long leaveId, Long approverId);
+    LeaveApplication rejectLeave(Long leaveId, Long approverId);
+    List<LeaveApplication> getPendingLeaveApplications();
 }

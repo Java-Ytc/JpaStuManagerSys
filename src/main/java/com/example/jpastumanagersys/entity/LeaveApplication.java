@@ -24,4 +24,8 @@ public class LeaveApplication {
 
     @Enumerated(EnumType.STRING)
     private LeaveStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "approver_id")
+    private User approver;
 }
