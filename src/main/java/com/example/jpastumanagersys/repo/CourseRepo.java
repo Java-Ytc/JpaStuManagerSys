@@ -2,8 +2,6 @@ package com.example.jpastumanagersys.repo;
 
 import com.example.jpastumanagersys.entity.Course;
 import com.example.jpastumanagersys.entity.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -17,11 +15,11 @@ public interface CourseRepo extends JpaRepository<Course, Long> {
     void deleteAllByCourseCodeIn(List<String> courseCode);
 
     // 根据课程名称进行模糊查询
-    Page<Course> findByCourseNameContaining(String courseName, Pageable pageable);
+    List<Course> findByCourseNameContaining(String courseName);
 
     // 查询没有分配老师的课程
-    Page<Course> findByTeacherIsNull(Pageable pageable);
+    List<Course> findByTeacherIsNull();
 
     // 根据老师分页查询课程
-    Page<Course> findByTeacher(User teacher, Pageable pageable);
+    List<Course> findByTeacher(User teacher);
 }

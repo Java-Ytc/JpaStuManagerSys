@@ -76,13 +76,6 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     }
 
     @Override
-    public Page<CourseSelection> getSelectionsByStudent(Long studentId, Pageable pageable) {
-        User student = userRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("无法通过ID获取学生"));
-
-        return selectionRepository.findByStudent(student, pageable);
-    }
-
-    @Override
     public Page<CourseSelection> getAllSelections(Pageable pageable) {
         return selectionRepository.findAll(pageable);
     }

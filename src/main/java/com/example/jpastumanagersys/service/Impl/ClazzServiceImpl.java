@@ -8,6 +8,7 @@ import com.example.jpastumanagersys.service.ClazzService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -63,13 +64,18 @@ public class ClazzServiceImpl implements ClazzService {
 
     @Override
     public Page<Clazz> getAllClasses(Pageable pageable) {
-        Page<Clazz> clazzPage = clazzRepo.findAll(pageable);
+        List<Clazz> allClazzes = clazzRepo.findAll();
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allClazzes.size());
+
+        List<Clazz> clazzPageContent = allClazzes.subList(start, end);
         // 为每个班级设置学生信息
-        for (Clazz clazz : clazzPage.getContent()) {
-            List<User> students = userRepo.findByClazz_ClassCode(clazz.getClassCode(), pageable).getContent();
+        for (Clazz clazz : clazzPageContent) {
+            List<User> students = userRepo.findByClazz_ClassCode(clazz.getClassCode());
             clazz.setStudents(students);
         }
-        return clazzPage;
+
+        return new PageImpl<>(clazzPageContent, pageable, allClazzes.size());
     }
 
     @Override
@@ -80,6 +86,17 @@ public class ClazzServiceImpl implements ClazzService {
 
     @Override
     public Page<Clazz> getByClassNameContaining(String className, Pageable pageable) {
-        return clazzRepo.findByClassNameContaining(className, pageable);
+        List<Clazz> allClasses = clazzRepo.findByClassNameContaining(className);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allClasses.size());
+
+        List<Clazz> clazzPageContent = allClasses.subList(start, end);
+        // 为每个班级设置学生信息
+        for (Clazz clazz : clazzPageContent) {
+            List<User> students = userRepo.findByClazz_ClassCode(clazz.getClassCode());
+            clazz.setStudents(students);
+        }
+
+        return new PageImpl<>(clazzPageContent, pageable, allClasses.size());
     }
 }

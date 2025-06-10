@@ -8,6 +8,7 @@ import com.example.jpastumanagersys.service.CourseService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -72,18 +73,23 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Page<Course> getAllCourses(Pageable pageable) {
-        Page<Course> coursePage = courseRepo.findAll(pageable);
+        List<Course> allCourses = courseRepo.findAll();
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allCourses.size());
+
+        List<Course> coursePageContent = allCourses.subList(start, end);
         // 为每个课程设置授课老师信息
-        for (Course course : coursePage.getContent()) {
+        for (Course course : coursePageContent) {
             // 获取该课程对应的老师
-            List<User> teachers = userRepo.findByCourses_CourseCode(course.getCourseCode(), pageable).getContent();
+            List<User> teachers = userRepo.findByCourses_CourseCode(course.getCourseCode());
             if (!teachers.isEmpty()) {
                 course.setTeacher(teachers.get(0));
             } else {
                 course.setTeacher(null);
             }
         }
-        return coursePage;
+
+        return new PageImpl<>(coursePageContent, pageable, allCourses.size());
     }
 
     @Override
@@ -94,21 +100,43 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Page<Course> getByCourseNameContaining(String courseName, Pageable pageable) {
-        return courseRepo.findByCourseNameContaining(courseName, pageable);
+        List<Course> courses = courseRepo.findByCourseNameContaining(courseName);
+        return getPagedCourses(courses, pageable);
     }
 
     @Override
     public Page<Course> getUnassignedCourses(Pageable pageable) {
-        return courseRepo.findByTeacherIsNull(pageable);
+        List<Course> unassignedCourses = courseRepo.findByTeacherIsNull();
+        return getPagedCourses(unassignedCourses, pageable);
     }
 
     @Override
     public Page<Course> getByTeacher(User teacher, Pageable pageable) {
-        return courseRepo.findByTeacher(teacher, pageable);
+        List<Course> courses = courseRepo.findByTeacher(teacher);
+        return getPagedCourses(courses, pageable);
     }
 
     @Override
     public Course getById(Long id) {
         return courseRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("无法根据课程ID获取课程"));
+    }
+
+    private Page<Course> getPagedCourses(List<Course> courses, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), courses.size());
+
+        List<Course> coursePageContent = courses.subList(start, end);
+        // 为每个课程设置授课老师信息
+        for (Course course : coursePageContent) {
+            // 获取该课程对应的老师
+            List<User> teachers = userRepo.findByCourses_CourseCode(course.getCourseCode());
+            if (!teachers.isEmpty()) {
+                course.setTeacher(teachers.get(0));
+            } else {
+                course.setTeacher(null);
+            }
+        }
+
+        return new PageImpl<>(coursePageContent, pageable, courses.size());
     }
 }

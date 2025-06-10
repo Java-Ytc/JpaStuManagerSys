@@ -13,8 +13,6 @@ public interface CourseSelectionService {
 
     List<CourseSelection> getSelectionsByStudent(Long studentId);
 
-    Page<CourseSelection> getSelectionsByStudent(Long studentId, Pageable pageable);
-
     Page<CourseSelection> getAllSelections(Pageable pageable);
 
     CourseSelection updateScore(Long selectionId, Double score);

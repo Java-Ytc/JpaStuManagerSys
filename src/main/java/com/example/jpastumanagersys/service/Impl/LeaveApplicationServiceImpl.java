@@ -7,8 +7,6 @@ import com.example.jpastumanagersys.repo.LeaveApplicationRepo;
 import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.LeaveApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,12 +39,6 @@ public class LeaveApplicationServiceImpl implements LeaveApplicationService {
     public List<LeaveApplication> getLeaveApplicationsByStudent(Long studentId) {
         User student = userRepo.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
         return leaveApplicationRepo.findByStudent(student);
-    }
-
-    @Override
-    public Page<LeaveApplication> getLeaveApplicationsByStudent(Long studentId, Pageable pageable) {
-        User student = userRepo.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found"));
-        return leaveApplicationRepo.findByStudent(student, pageable);
     }
 
     @Override

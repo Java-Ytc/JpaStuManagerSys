@@ -1,8 +1,6 @@
 package com.example.jpastumanagersys.repo;
 
 import com.example.jpastumanagersys.entity.Clazz;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -16,5 +14,5 @@ public interface ClazzRepo extends JpaRepository<Clazz, Long> {
     void deleteAllByClassCodeIn(List<String> classCodes);
 
     // 根据班级名称模糊查找
-    Page<Clazz> findByClassNameContaining(String className, Pageable pageable);
+    List<Clazz> findByClassNameContaining(String className);
 }
