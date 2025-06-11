@@ -151,4 +151,29 @@ public class TeacherController {
         // 重定向到包含课程编号和课程 ID 的 URL
         return "redirect:/teacher/course/detail/" + courseCode + "/" + courseId;
     }
+
+    /**
+     * 显示某个课程下某个学生的所有缺课记录
+     *
+     * @param courseId    课程 ID
+     * @param selectionId 选课记录 ID
+     * @param model       用于传递数据到视图的模型对象
+     * @return 显示缺课记录的页面视图名称
+     */
+    @GetMapping("/course/detail/{courseId}/absence/records/{selectionId}")
+    public String showAbsenceRecords(@PathVariable Long courseId, @PathVariable Long selectionId, Model model) {
+        CourseSelection selection = selectionService.getById(selectionId);
+        Course course = courseService.getById(courseId);
+        User student = selection.getStudent();
+
+        // 获取该学生该课程的所有缺课记录
+        List<Attendance> absences = attendanceService.getAttendanceByStudentAndCourse(student.getId(), course.getId());
+
+        model.addAttribute("selection", selection);
+        model.addAttribute("course", course);
+        model.addAttribute("student", student);
+        model.addAttribute("absences", absences);
+
+        return "/teacher/teacher-absence-records"; // 返回显示缺课记录的页面
+    }
 }

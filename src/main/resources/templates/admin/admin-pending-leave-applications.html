@@ -17,16 +17,17 @@
   </tr>
   </thead>
   <tbody>
-  <tr th:each="application : ${pendingApplications}">
-    <td th:text="${application.student.username}"></td>
-    <td th:text="${application.startDate}"></td>
-    <td th:text="${application.endDate}"></td>
-    <td th:text="${application.reason}"></td>
+  <!-- 将迭代变量名从 application 改为 leaveApplication -->
+  <tr th:each="leaveApplication : ${pendingApplications}">
+    <td th:text="${leaveApplication.student.username}"></td>
+    <td th:text="${leaveApplication.startDate}"></td>
+    <td th:text="${leaveApplication.endDate}"></td>
+    <td th:text="${leaveApplication.reason}"></td>
     <td>
-      <form th:action="@{/admin/leave-applications/{leaveId}/approve(leaveId=${application.id})}" method="post">
+      <form th:action="@{/admin/leave-applications/{leaveId}/approve(leaveId=${leaveApplication.id})}" method="post">
         <button type="submit">批准</button>
       </form>
-      <form th:action="@{/admin/leave-applications/{leaveId}/reject(leaveId=${application.id})}" method="post">
+      <form th:action="@{/admin/leave-applications/{leaveId}/reject(leaveId=${leaveApplication.id})}" method="post">
         <button type="submit">拒绝</button>
       </form>
     </td>

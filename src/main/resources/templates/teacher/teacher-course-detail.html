@@ -15,6 +15,7 @@
     <th>分数</th>
     <th>操作</th>
     <th>缺课操作</th>
+    <th>查看缺课记录</th> <!-- 添加新的列 -->
   </tr>
   </thead>
   <tbody>
@@ -34,10 +35,15 @@
       <!-- 可以添加其他操作按钮 -->
     </td>
     <td>
-      <a th:href="@{/teacher/course/detail/{courseId}/absence/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}">缺课记录</a>
+      <a th:href="@{/teacher/course/detail/{courseId}/absence/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}">缺课</a>
+    </td>
+    <td>
+      <a th:href="@{/teacher/course/detail/{courseId}/absence/records/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}">查看缺课记录</a> <!-- 添加新的链接 -->
     </td>
   </tr>
   </tbody>
 </table>
+<!-- 添加返回教师面板链接 -->
+<a href="/teacher/dashboard">返回教师主页面</a>
 </body>
 </html>

@@ -58,7 +58,7 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
     @Override
     public void dropCourse(Long studentId, Long courseId) {
-        CourseSelection selection = selectionRepository.findByStudentIdAndCourseId(studentId, courseId).orElseThrow(() -> new IllegalArgumentException("Course selection not found"));
+        CourseSelection selection = selectionRepository.findByStudentIdAndCourseId(studentId, courseId).orElseThrow(() -> new IllegalArgumentException("无法找到选课记录"));
 
         // 更新课程选课人数
         Course course = selection.getCourse();

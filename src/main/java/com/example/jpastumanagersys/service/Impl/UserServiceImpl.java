@@ -159,9 +159,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 过滤出角色为 STUDENT 的用户
-        List<User> studentList = allStudents.stream()
-                .filter(user -> "STUDENT".equals(user.getRole()))
-                .collect(Collectors.toList());
+        List<User> studentList = filterUsersByRole(allStudents, "STUDENT");
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), studentList.size());
@@ -186,9 +184,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // 过滤出角色为TEACHER的用户
-        List<User> teacherList = allTeachers.stream()
-                .filter(user -> "TEACHER".equals(user.getRole()))
-                .collect(Collectors.toList());
+        List<User> teacherList = filterUsersByRole(allTeachers, "TEACHER");
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), teacherList.size());
@@ -222,9 +218,7 @@ public class UserServiceImpl implements UserService {
         // 先查询出所有未分配班级的用户
         List<User> allUnassignedUsers = userRepo.findByClazzIsNull();
         // 过滤出角色为 STUDENT 的用户
-        List<User> unassignedStudents = allUnassignedUsers.stream()
-                .filter(user -> "STUDENT".equals(user.getRole()))
-                .collect(Collectors.toList());
+        List<User> unassignedStudents = filterUsersByRole(allUnassignedUsers, "STUDENT");
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), unassignedStudents.size());
@@ -288,5 +282,12 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepo.save(teacher);
+    }
+
+    @Override
+    public List<User> filterUsersByRole(List<User> users, String role) {
+        return users.stream()
+                .filter(user -> role.equals(user.getRole()))
+                .collect(Collectors.toList());
     }
 }

@@ -49,4 +49,7 @@ public interface UserService extends UserDetailsService {
 
     // 批量解除课程与教师的关联
     void dissociateCoursesFromTeacher(String userCode, List<String> courseCodes);
+
+    // 根据角色过滤用户列表
+    List<User> filterUsersByRole(List<User> users, String role);
 }

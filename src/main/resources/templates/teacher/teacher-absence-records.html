@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>学生缺课记录</title>
+</head>
+<body>
+<h1>课程: [[${course.courseName}]] - 学生: [[${student.username}]] 的缺课记录</h1>
+<table>
+    <thead>
+    <tr>
+        <th>缺课日期</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="absence : ${absences}">
+        <td>[[${#dates.format(absence.attendanceDate, 'yyyy-MM-dd')}]]</td>
+    </tr>
+    </tbody>
+</table>
+<!-- 添加返回课程详细信息页面的链接 -->
+<a th:href="@{/teacher/course/detail/{courseCode}/{courseId}(courseCode=${course.courseCode}, courseId=${course.id})}">返回课程详细信息</a>
+</body>
+</html>
