@@ -13,6 +13,8 @@
   <tr>
     <th>课程编号</th>
     <th>课程名称</th>
+    <th>当前人数</th>
+    <th>最大人数</th>
     <th>操作</th>
   </tr>
   </thead>
@@ -20,10 +22,12 @@
   <tr th:each="course : ${courses}">
     <td th:text="${course.courseCode}"></td>
     <td th:text="${course.courseName}"></td>
+    <td th:text="${course.currentStudents}"></td>
+    <td th:text="${course.maxStudents}"></td>
     <td>
       <form action="/student/select-course" method="post">
         <input type="hidden" th:value="${course.id}" name="courseId">
-        <input type="submit" value="选课">
+        <input type="submit" value="选课" th:disabled="${course.currentStudents >= course.maxStudents}">
       </form>
     </td>
   </tr>

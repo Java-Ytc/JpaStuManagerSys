@@ -35,13 +35,13 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
 
         // 检查课程是否已满
         if (course.getCurrentStudents() >= course.getMaxStudents()) {
-            throw new IllegalStateException("Course is full");
+            throw new IllegalStateException("课程已满");
         }
 
         // 检查学生是否已选该课程
         Optional<CourseSelection> existingSelection = selectionRepository.findByStudentIdAndCourseId(studentId, courseId);
         if (existingSelection.isPresent()) {
-            throw new IllegalStateException("Student already selected this course");
+            throw new IllegalStateException("该课程已选");
         }
 
         CourseSelection selection = new CourseSelection();
