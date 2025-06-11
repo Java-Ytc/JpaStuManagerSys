@@ -15,6 +15,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         request.getSession().setAttribute("error", exception.getMessage());
+        logger.info("Error message set to session: {}", exception.getMessage());
         response.sendRedirect("/auth/login");
     }
 }

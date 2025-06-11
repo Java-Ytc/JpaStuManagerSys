@@ -15,6 +15,15 @@ import java.util.Random;
 
 @Controller
 public class CaptchaController {
+    /**
+     * 生成验证码图片
+     * 该方法用于生成验证码图片，并将其输出到响应流中。首先设置响应头，禁止缓存，
+     * 然后创建验证码图片，生成随机验证码并保存到会话中，添加干扰线，最后将图片输出到响应流。
+     *
+     * @param request  HttpServletRequest 对象，用于获取会话信息
+     * @param response HttpServletResponse 对象，用于设置响应头和输出图片
+     * @throws IOException 当图片输出出现异常时抛出该异常
+     */
     @GetMapping("/captcha")
     public void generateCaptcha(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("image/jpeg");

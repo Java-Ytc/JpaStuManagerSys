@@ -62,6 +62,7 @@ public class TeacherController {
      * 最后返回课程详细信息页面的视图。
      *
      * @param courseCode 课程 编号
+     * @param courseId   课程 ID
      * @param model      用于传递数据到视图的模型对象
      * @return 课程详细信息页面的视图名称
      */
@@ -89,6 +90,7 @@ public class TeacherController {
      * 调用分数服务进行分数保存或更新。如果操作成功，将成功消息添加到模型中；
      * 如果出现异常，将异常信息添加到模型中，最后返回课程详细信息页面的视图。
      *
+     * @param courseId    课程 ID
      * @param selectionId 选课记录 ID
      * @param score       分数
      * @param model       用于传递数据到视图的模型对象
@@ -119,6 +121,16 @@ public class TeacherController {
         return "redirect:/teacher/course/detail/" + courseCode + "/" + courseId;
     }
 
+    /**
+     * 显示缺课记录页面
+     * 该方法用于展示某个课程下某个学生的缺课记录页面，首先根据选课记录 ID 和课程 ID 获取相关信息，
+     * 然后查询该学生该课程的所有缺课记录，将这些信息添加到模型中，最后返回缺课记录页面的视图。
+     *
+     * @param courseId    课程 ID
+     * @param selectionId 选课记录 ID
+     * @param model       用于传递数据到视图的模型对象
+     * @return 缺课记录页面的视图名称
+     */
     @GetMapping("/course/detail/{courseId}/absence/{selectionId}")
     public String showAbsencePage(@PathVariable Long courseId, @PathVariable Long selectionId, Model model) {
         CourseSelection selection = selectionService.getById(selectionId);
@@ -135,6 +147,16 @@ public class TeacherController {
         return "/teacher/teacher-absence-form";
     }
 
+    /**
+     * 记录学生缺课信息
+     * 该方法用于处理老师记录学生缺课信息的操作，根据选课记录 ID 和课程 ID 获取相关信息，
+     * 调用考勤服务记录缺课信息。记录完成后，重定向到课程详细信息页面。
+     *
+     * @param courseId    课程 ID
+     * @param selectionId 选课记录 ID
+     * @param model       用于传递数据到视图的模型对象
+     * @return 重定向的 URL
+     */
     @PostMapping("/course/detail/{courseId}/absence/{selectionId}")
     public String saveAbsence(@PathVariable Long courseId, @PathVariable Long selectionId, Model model) {
         CourseSelection selection = selectionService.getById(selectionId);

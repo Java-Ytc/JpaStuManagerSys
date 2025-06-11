@@ -19,6 +19,14 @@ public class HomeController {
     @Autowired
     private CourseService courseService;
 
+    /**
+     * 显示主页信息
+     * 该方法用于获取系统中的用户总数、教师总数、班级总数和课程总数，并将这些信息添加到模型中，
+     * 然后返回主页的视图。
+     *
+     * @param model 用于传递数据到视图的模型对象
+     * @return 主页的视图名称
+     */
     @GetMapping("/")
     public String home(Model model) {
         long totalUsers = userService.getAllUsers().size();
