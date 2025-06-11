@@ -9,12 +9,14 @@ import com.example.jpastumanagersys.repo.UserRepo;
 import com.example.jpastumanagersys.service.CourseSelectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseSelectionServiceImpl implements CourseSelectionService {
@@ -97,5 +99,43 @@ public class CourseSelectionServiceImpl implements CourseSelectionService {
     @Override
     public CourseSelection getById(Long id) {
         return selectionRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Course selection not found"));
+    }
+
+    @Override
+    public Page<CourseSelection> getSelectionsByCondition(String courseCode, String courseName, String studentCode, String studentName, Pageable pageable) {
+        List<CourseSelection> allSelections = selectionRepository.findAll();
+
+        if (courseCode != null && !courseCode.isEmpty()) {
+            Course course = courseRepository.findByCourseCode(courseCode).orElseThrow(() -> new IllegalArgumentException("无法找到该课程"));
+            allSelections = allSelections.stream()
+                    .filter(selection -> selection.getCourse().equals(course))
+                    .collect(Collectors.toList());
+        }
+
+        if (courseName != null && !courseName.isEmpty()) {
+            List<Course> courses = courseRepository.findByCourseNameContaining(courseName);
+            allSelections = allSelections.stream()
+                    .filter(selection -> courses.contains(selection.getCourse()))
+                    .collect(Collectors.toList());
+        }
+
+        if (studentCode != null && !studentCode.isEmpty()) {
+            User student = userRepository.findByUserCode(studentCode).orElseThrow(() -> new IllegalArgumentException("无法找到该用户"));
+            allSelections = allSelections.stream()
+                    .filter(selection -> selection.getStudent().equals(student))
+                    .collect(Collectors.toList());
+        }
+
+        if (studentName != null && !studentName.isEmpty()) {
+            List<User> students = userRepository.findByUsernameContaining(studentName);
+            allSelections = allSelections.stream()
+                    .filter(selection -> students.contains(selection.getStudent()))
+                    .collect(Collectors.toList());
+        }
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allSelections.size());
+
+        return new PageImpl<>(allSelections.subList(start, end), pageable, allSelections.size());
     }
 }

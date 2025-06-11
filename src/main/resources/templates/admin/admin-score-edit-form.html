@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>添加成绩</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-8">
+<h1 class="text-3xl font-bold mb-4">添加成绩</h1>
+<a href="/admin/dashboard" class="text-blue-500 hover:underline mb-4 block">返回主页面</a>
+<form action="/admin/scores/add" method="get" class="bg-white p-6 rounded shadow mb-6">
+    <div class="flex flex-wrap -mx-3 mb-4">
+        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <label for="courseCode" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">课程编号:</label>
+            <input type="text" id="courseCode" name="courseCode" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        </div>
+        <div class="w-full md:w-1/2 px-3">
+            <label for="courseName" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">课程名称:</label>
+            <input type="text" id="courseName" name="courseName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        </div>
+    </div>
+    <div class="flex flex-wrap -mx-3 mb-4">
+        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <label for="studentCode" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">学生编号:</label>
+            <input type="text" id="studentCode" name="studentCode" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        </div>
+        <div class="w-full md:w-1/2 px-3">
+            <label for="studentName" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">学生名称:</label>
+            <input type="text" id="studentName" name="studentName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+        </div>
+    </div>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">查询</button>
+</form>
+<form action="/admin/scores/save" method="post" class="bg-white p-6 rounded shadow mb-6">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+        <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">课程编号</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">课程名称</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学生编号</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学生名称</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">成绩</th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        <tr th:if="${noSelectionsMessage}">
+            <td colspan="5" class="text-center text-gray-500 py-4" th:text="${noSelectionsMessage}"></td>
+        </tr>
+        <tr th:each="selection : ${selections}">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${selection.course.courseCode}"></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${selection.course.courseName}"></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${selection.student.userCode}"></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${selection.student.username}"></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <label for="score-__${selection.id}__" class="sr-only">成绩</label>
+                <input type="hidden" name="selectionId" th:value="${selection.id}">
+                <input type="number" id="score-__${selection.id}__" name="score" th:value="${selection.score != null ? selection.score : ''}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-2 px-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4">保存</button>
+</form>
+<div class="flex justify-between">
+    <a th:href="@{/admin/scores/add(page = ${currentPage - 1})}" th:if="${currentPage > 0}" class="text-blue-500 hover:underline">上一页</a>
+    <a th:href="@{/admin/scores/add(page = ${currentPage + 1})}" th:if="${currentPage < totalPages - 1}" class="text-blue-500 hover:underline">下一页</a>
+</div>
+</body>
+</html>

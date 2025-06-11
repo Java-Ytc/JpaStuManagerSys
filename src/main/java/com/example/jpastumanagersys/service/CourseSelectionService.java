@@ -21,4 +21,6 @@ public interface CourseSelectionService {
     List<CourseSelection> getSelectionsByCourse(Long courseId);
 
     CourseSelection getById(Long id);
+
+    Page<CourseSelection> getSelectionsByCondition(String courseCode, String courseName, String studentCode, String studentName, Pageable pageable);
 }

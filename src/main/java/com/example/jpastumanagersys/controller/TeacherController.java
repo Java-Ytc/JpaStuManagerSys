@@ -93,11 +93,10 @@ public class TeacherController {
      * @param courseId    课程 ID
      * @param selectionId 选课记录 ID
      * @param score       分数
-     * @param model       用于传递数据到视图的模型对象
      * @return 课程详细信息页面的视图名称
      */
     @PostMapping("/course/detail/{courseId}/score")
-    public String saveScore(@PathVariable Long courseId, @RequestParam Long selectionId, @RequestParam Double score, Model model) {
+    public String saveScore(@PathVariable Long courseId, @RequestParam Long selectionId, @RequestParam Double score) {
         CourseSelection selection = selectionService.getById(selectionId);
         User student = selection.getStudent();
         Course course = selection.getCourse();
@@ -154,11 +153,10 @@ public class TeacherController {
      *
      * @param courseId    课程 ID
      * @param selectionId 选课记录 ID
-     * @param model       用于传递数据到视图的模型对象
      * @return 重定向的 URL
      */
     @PostMapping("/course/detail/{courseId}/absence/{selectionId}")
-    public String saveAbsence(@PathVariable Long courseId, @PathVariable Long selectionId, Model model) {
+    public String saveAbsence(@PathVariable Long courseId, @PathVariable Long selectionId) {
         CourseSelection selection = selectionService.getById(selectionId);
         User student = selection.getStudent();
         Course course = selection.getCourse();

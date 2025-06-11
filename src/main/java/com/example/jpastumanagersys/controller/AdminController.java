@@ -1,13 +1,7 @@
 package com.example.jpastumanagersys.controller;
 
-import com.example.jpastumanagersys.entity.Clazz;
-import com.example.jpastumanagersys.entity.Course;
-import com.example.jpastumanagersys.entity.LeaveApplication;
-import com.example.jpastumanagersys.entity.User;
-import com.example.jpastumanagersys.service.ClazzService;
-import com.example.jpastumanagersys.service.CourseService;
-import com.example.jpastumanagersys.service.LeaveApplicationService;
-import com.example.jpastumanagersys.service.UserService;
+import com.example.jpastumanagersys.entity.*;
+import com.example.jpastumanagersys.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,6 +32,12 @@ public class AdminController {
     @Autowired
     private LeaveApplicationService leaveApplicationService;
 
+    @Autowired
+    private ScoreService scoreService;
+
+    @Autowired
+    private CourseSelectionService selectionService;
+
     /**
      * 管理员主页
      * 该方法用于展示管理员主页信息，包含学生总数和教师总数。首先统计学生和教师的数量，
@@ -61,7 +61,8 @@ public class AdminController {
         return "/admin/admin-dashboard";
     }
 
-    /*------------------------------------------学生模块---------------------------------------*/
+
+    /*------------------------------------------ 学生模块 ---------------------------------------*/
 
     /**
      * 显示学生列表页面
@@ -176,18 +177,19 @@ public class AdminController {
         return "redirect:/admin/students";
     }
 
-    /*-----------------------------------------------教师模块-------------------------------------------------*/
+
+    /*----------------------------------------------- 教师模块 -------------------------------------------------*/
 
     /**
      * 显示教师列表
      * 该方法用于展示教师列表，支持根据教师编号和用户名进行查询。根据传入的参数进行相应的查询，
      * 将查询结果添加到模型中，并返回教师列表页面的视图。
      *
-     * @param userCode  教师编号
-     * @param username  用户名
-     * @param page      当前页码，默认为 0
-     * @param size      每页显示的记录数，默认为 10
-     * @param model     用于传递数据到视图的模型对象
+     * @param userCode 教师编号
+     * @param username 用户名
+     * @param page     当前页码，默认为 0
+     * @param size     每页显示的记录数，默认为 10
+     * @param model    用于传递数据到视图的模型对象
      * @return 教师列表页面的视图名称
      */
     @GetMapping("/teachers")
@@ -355,7 +357,7 @@ public class AdminController {
      * 该方法用于处理为老师分配多个课程的请求，根据教师编号和课程编号列表，调用用户服务进行课程分配，
      * 然后重定向到教师详细信息页面。
      *
-     * @param userCode   教师编号
+     * @param userCode    教师编号
      * @param courseCodes 课程编号列表
      * @return 重定向的 URL
      */
@@ -370,7 +372,7 @@ public class AdminController {
      * 该方法用于处理解除教师和课程关联的请求，根据教师编号和课程编号列表，调用用户服务解除关联，
      * 然后重定向到教师详细信息页面。
      *
-     * @param userCode   教师编号
+     * @param userCode    教师编号
      * @param courseCodes 课程编号列表
      * @return 重定向的 URL
      */
@@ -380,7 +382,8 @@ public class AdminController {
         return "redirect:/admin/teachers/detail/" + userCode;
     }
 
-    /*------------------------------------------------班级模块------------------------------------------*/
+
+    /*------------------------------------------------ 班级模块 ------------------------------------------*/
 
     /**
      * 显示班级列表页面，支持查询功能
@@ -526,7 +529,8 @@ public class AdminController {
         return "redirect:/admin/classes";
     }
 
-    /*--------------------------------------------课程模块--------------------------------------------*/
+
+    /*-------------------------------------------- 课程模块 --------------------------------------------*/
 
     /**
      * 显示课程列表页面，支持查询功能
@@ -637,7 +641,8 @@ public class AdminController {
         return "redirect:/admin/courses";
     }
 
-    /*-----------------------------------请假审批--------------------------------*/
+
+    /*---------------------------------------- 请假审批 ------------------------------------*/
 
     /**
      * 显示待审批的请假申请列表
@@ -698,5 +703,106 @@ public class AdminController {
             model.addAttribute("error", e.getMessage());
         }
         return "redirect:/admin/leave-applications/pending";
+    }
+
+
+    /*----------------------------------------- 成绩管理 -------------------------------------*/
+    /**
+     * 查看成绩列表
+     * 该方法用于根据课程编号、课程名称、学生编号和学生名称等条件分页查询成绩信息。
+     * 调用成绩服务的 getScoresByCondition 方法进行查询，并将查询结果添加到模型中，
+     * 最后返回成绩列表页面的视图。
+     *
+     * @param courseCode  课程编号，可选参数
+     * @param courseName  课程名称，可选参数
+     * @param studentCode 学生编号，可选参数
+     * @param studentName 学生名称，可选参数
+     * @param page        当前页码，默认值为 0
+     * @param size        每页显示的记录数，默认值为 10
+     * @param model       用于传递数据到视图的模型对象
+     * @return 成绩列表页面的视图名称
+     */
+    @GetMapping("/scores")
+    public String listScores(@RequestParam(required = false) String courseCode, @RequestParam(required = false) String courseName, @RequestParam(required = false) String studentCode, @RequestParam(required = false) String studentName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+
+        Page<Score> scorePage = scoreService.getScoresByCondition(courseCode, courseName, studentCode, studentName, PageRequest.of(page, size));
+
+        model.addAttribute("scores", scorePage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", scorePage.getTotalPages());
+        if (scorePage.isEmpty()) {
+            model.addAttribute("noScoresMessage", "No scores found.");
+        }
+        return "/admin/admin-score-list";
+    }
+
+    /**
+     * 显示添加成绩表单页面
+     * 该方法用于根据课程编号、课程名称、学生编号和学生名称等条件分页查询选课记录信息。
+     * 对于每个选课记录，查询对应的成绩信息并设置到选课记录中，然后将查询结果添加到模型中，
+     * 最后返回添加成绩表单页面的视图。
+     *
+     * @param courseCode  课程编号，可选参数
+     * @param courseName  课程名称，可选参数
+     * @param studentCode 学生编号，可选参数
+     * @param studentName 学生名称，可选参数
+     * @param page        当前页码，默认值为 0
+     * @param size        每页显示的记录数，默认值为 10
+     * @param model       用于传递数据到视图的模型对象
+     * @return 添加成绩表单页面的视图名称
+     */
+    @GetMapping("/scores/edit")
+    public String editScoreForm(@RequestParam(required = false) String courseCode, @RequestParam(required = false) String courseName, @RequestParam(required = false) String studentCode, @RequestParam(required = false) String studentName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+
+        Page<CourseSelection> selectionPage = selectionService.getSelectionsByCondition(courseCode, courseName, studentCode, studentName, PageRequest.of(page, size));
+
+        for (CourseSelection selection : selectionPage.getContent()) {
+            User student = selection.getStudent();
+            Course course = selection.getCourse();
+            Score score = scoreService.getByStudentAndCourse(student.getId(), course.getId());
+            if (score != null) {
+                selection.setScore(score.getScore());
+            }
+        }
+
+        model.addAttribute("selections", selectionPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", selectionPage.getTotalPages());
+        if (selectionPage.isEmpty()) {
+            model.addAttribute("noSelectionsMessage", "No course selections found.");
+        }
+        return "/admin/admin-score-edit-form";
+    }
+
+    /**
+     * 保存成绩信息
+     * 该方法用于处理保存成绩的操作，根据选课记录 ID 和分数，查询对应的学生和课程信息，
+     * 然后更新或创建成绩记录，并将成绩信息保存到数据库中。同时更新选课记录中的成绩信息，
+     * 最后重定向到成绩列表页面。
+     *
+     * @param selectionId 选课记录 ID
+     * @param score       分数
+     * @param model       用于传递数据到视图的模型对象
+     * @return 重定向的 URL
+     */
+    @PostMapping("/scores/save")
+    public String saveScore(@RequestParam Long selectionId, @RequestParam Double score, Model model) {
+        CourseSelection selection = selectionService.getById(selectionId);
+        User student = selection.getStudent();
+        Course course = selection.getCourse();
+
+        Score scoreObj = scoreService.getByStudentAndCourse(student.getId(), course.getId());
+        if (scoreObj == null) {
+            scoreObj = new Score();
+            scoreObj.setStudent(student);
+            scoreObj.setCourse(course);
+        }
+        scoreObj.setScore(score);
+        scoreService.save(scoreObj);
+
+        selection.setScore(score);
+        selectionService.updateScore(selectionId, score);
+
+        return "redirect:/admin/scores";
     }
 }
