@@ -37,4 +37,7 @@ public interface CourseService {
 
     // 根据课程编号获取课程
     Course getById(Long id);
+
+    // 获取所有课程
+    List<Course> getAllCourses();
 }

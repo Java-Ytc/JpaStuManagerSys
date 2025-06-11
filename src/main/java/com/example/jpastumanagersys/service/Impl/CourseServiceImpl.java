@@ -139,4 +139,9 @@ public class CourseServiceImpl implements CourseService {
 
         return new PageImpl<>(coursePageContent, pageable, courses.size());
     }
+
+    @Override
+    public List<Course> getAllCourses() {
+        return courseRepo.findAll();
+    }
 }

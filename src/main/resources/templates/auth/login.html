@@ -2,16 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login Page</title>
+  <title>登录</title>
 </head>
 <body>
-<h1>Login</h1>
+<h1>登录</h1>
+<!-- 显示错误信息 -->
+<p th:if="${error}" th:text="${error}" style="color: red;"></p>
 <form action="#" th:action="@{/auth/login}" th:method="post">
   <!--不要更改input标签的属性，Spring Security默认通过username和password查找-->
   <label for="username">用户编号:</label>
   <input type="text" id="username" name="username" required><br><br>
   <label for="password">密码:</label>
   <input type="password" id="password" name="password" required><br><br>
+  <label for="captcha">验证码:</label>
+  <input type="text" id="captcha" name="captcha" required><br><br>
+  <img src="/captcha" alt="验证码">
   <input type="submit" value="登录">
 </form>
 <a href="#" th:href="@{/auth/register}">注册</a>

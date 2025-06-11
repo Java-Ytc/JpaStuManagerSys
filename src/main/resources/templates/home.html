@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>主页</title>
+</head>
+<body>
+<h1>欢迎来到学生管理系统</h1>
+<p>当前用户数量: <span th:text="${totalUsers}"></span></p>
+<p>当前教师数量: <span th:text="${totalTeachers}"></span></p>
+<p>当前班级数量：<span th:text="${totalClazz}"></span> </p>
+<p>当前课程数量: <span th:text="${totalCourses}"></span></p>
+<div style="text-align: right;">
+  <a href="#" th:href="@{/auth/login}">登录</a>
+  <a href="#" th:href="@{/auth/register}">注册</a>
+</div>
+</body>
+</html>

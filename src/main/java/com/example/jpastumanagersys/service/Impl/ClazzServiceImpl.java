@@ -99,4 +99,9 @@ public class ClazzServiceImpl implements ClazzService {
 
         return new PageImpl<>(clazzPageContent, pageable, allClasses.size());
     }
+
+    @Override
+    public List<Clazz> getAllClasses() {
+        return clazzRepo.findAll();
+    }
 }

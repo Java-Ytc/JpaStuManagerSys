@@ -10,7 +10,9 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * SecurityConfig 类是 Spring Security 的配置类，用于配置应用程序的安全规则，
@@ -41,19 +43,16 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationSuccessHandler customAuthenticationSuccessHandler) throws Exception {
-        // 配置请求的授权规则
-        http.authorizeHttpRequests(this::configureAuthorizeRequests)
-                // 配置表单登录功能
+        AuthenticationFailureHandler failureHandler = new CustomAuthenticationFailureHandler();
+
+        http.addFilterBefore(new CaptchaFilter(failureHandler), UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(this::configureAuthorizeRequests)
                 .formLogin(form -> form
-                        // 设置登录页面的 URL
                         .loginPage("/auth/login")
-                        // 设置自定义的认证成功处理器
                         .successHandler(customAuthenticationSuccessHandler)
-                        // 允许所有用户访问登录页面
+                        .failureHandler(failureHandler)
                         .permitAll())
-                // 配置退出登录功能
                 .logout(this::configureLogout)
-                // 禁用 CSRF 保护（在生产环境中建议启用）
                 .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
@@ -66,7 +65,7 @@ public class SecurityConfig {
      */
     private void configureAuthorizeRequests(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
         // 允许所有用户访问登录、注册和验证码相关的 URL
-        authorize.requestMatchers("/auth/login", "/auth/register", "/captcha").permitAll()
+        authorize.requestMatchers("/", "/auth/login", "/auth/register", "/captcha").permitAll()
                 // 只有具有 ADMIN 角色的用户才能访问以 /admin/ 开头的 URL
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // 只有具有 TEACHER 角色的用户才能访问以 /teacher/ 开头的 URL

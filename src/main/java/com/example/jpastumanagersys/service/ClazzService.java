@@ -27,4 +27,7 @@ public interface ClazzService {
 
     // 根据班级名称查找班级信息
     Page<Clazz> getByClassNameContaining(String className, Pageable pageable);
+
+    // 获取所有课程信息
+    List<Clazz> getAllClasses();
 }
