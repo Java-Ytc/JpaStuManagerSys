@@ -3,42 +3,71 @@
 <head>
     <meta charset="utf-8">
     <title>查看成绩</title>
+    <!-- 引入Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- 引入Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* 渐变背景 */
+        body {
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
+        }
+        /* 按钮悬停动画 */
+        button {
+            transition: background-color 0.3s ease;
+        }
+        /* 表格行淡入效果 */
+        tbody tr {
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 p-8">
-<h1 class="text-3xl font-bold mb-4">查看成绩</h1>
-<a href="/admin/dashboard" class="text-blue-500 hover:underline mb-4 block">返回主页面</a>
-<form action="/admin/scores" method="get" class="bg-white p-6 rounded shadow mb-6">
-    <div class="flex flex-wrap -mx-3 mb-4">
-        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+<body class="p-8">
+<h1 class="text-3xl font-bold mb-4 text-blue-600">查看成绩</h1>
+<!-- 添加返回图标 -->
+<a href="/admin/dashboard" class="text-blue-500 hover:underline mb-4 block"><i class="fa-solid fa-arrow-left"></i> 返回主页面</a>
+<form action="/admin/scores" method="get" class="bg-white p-6 rounded shadow-md mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
             <label for="courseCode" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">课程编号:</label>
-            <input type="text" id="courseCode" name="courseCode" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <input type="text" id="courseCode" name="courseCode" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
         </div>
-        <div class="w-full md:w-1/2 px-3">
+        <div>
             <label for="courseName" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">课程名称:</label>
-            <input type="text" id="courseName" name="courseName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <input type="text" id="courseName" name="courseName" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
         </div>
     </div>
-    <div class="flex flex-wrap -mx-3 mb-4">
-        <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
             <label for="studentCode" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">学生编号:</label>
-            <input type="text" id="studentCode" name="studentCode" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <input type="text" id="studentCode" name="studentCode" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
         </div>
-        <div class="w-full md:w-1/2 px-3">
+        <div>
             <label for="studentName" class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">学生名称:</label>
-            <input type="text" id="studentName" name="studentName" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+            <input type="text" id="studentName" name="studentName" class="appearance-none block w-full bg-gray-100 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
         </div>
     </div>
-    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">查询</button>
+    <!-- 添加搜索图标 -->
+    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><i class="fa-solid fa-magnifying-glass"></i> 查询</button>
 </form>
-<table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
+<table class="min-w-full divide-y divide-gray-200 shadow-md">
+    <thead class="bg-blue-100">
     <tr>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">课程编号</th>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">课程名称</th>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学生编号</th>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学生名称</th>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">成绩</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">课程编号</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">课程名称</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">学生编号</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">学生名称</th>
+        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">成绩</th>
     </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
@@ -55,8 +84,8 @@
     </tbody>
 </table>
 <div class="flex justify-between mt-4">
-    <a th:href="@{/admin/scores(page = ${currentPage - 1})}" th:if="${currentPage > 0}" class="text-blue-500 hover:underline">上一页</a>
-    <a th:href="@{/admin/scores(page = ${currentPage + 1})}" th:if="${currentPage < totalPages - 1}" class="text-blue-500 hover:underline">下一页</a>
+    <a th:href="@{/admin/scores(page = ${currentPage - 1})}" th:if="${currentPage > 0}" class="text-blue-500 hover:underline"><i class="fa-solid fa-chevron-left"></i> 上一页</a>
+    <a th:href="@{/admin/scores(page = ${currentPage + 1})}" th:if="${currentPage < totalPages - 1}" class="text-blue-500 hover:underline">下一页 <i class="fa-solid fa-chevron-right"></i></a>
 </div>
 </body>
 </html>

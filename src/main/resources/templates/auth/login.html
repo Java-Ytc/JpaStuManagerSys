@@ -5,6 +5,8 @@
   <title>登录</title>
   <!-- 添加Tailwind CSS CDN -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- 添加 Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
 <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
@@ -13,15 +15,15 @@
   <p th:if="${error}" th:text="${error}" class="text-red-500 text-sm mb-4 text-center"></p>
   <form action="#" th:action="@{/auth/login}" th:method="post" class="space-y-4">
     <div>
-      <label for="username" class="block text-sm font-medium text-gray-700">用户编号:</label>
+      <label for="username" class="block text-sm font-medium text-gray-700"><i class="fa-solid fa-user mr-2"></i>用户编号:</label>
       <input type="text" id="username" name="username" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
     </div>
     <div>
-      <label for="password" class="block text-sm font-medium text-gray-700">密码:</label>
+      <label for="password" class="block text-sm font-medium text-gray-700"><i class="fa-solid fa-lock mr-2"></i>密码:</label>
       <input type="password" id="password" name="password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
     </div>
     <div>
-      <label for="captcha" class="block text-sm font-medium text-gray-700">验证码:</label>
+      <label for="captcha" class="block text-sm font-medium text-gray-700"><i class="fa-solid fa-shield-keyhole mr-2"></i>验证码:</label>
       <div class="flex items-center space-x-2">
         <input type="text" id="captcha" name="captcha" required class="mt-1 flex-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
         <img src="/captcha" alt="验证码" class="h-10">
