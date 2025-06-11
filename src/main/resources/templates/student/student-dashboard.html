@@ -3,47 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>学生主页</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>欢迎，[[${student.username}]]</h1>
-
-<!-- 显示选课记录 -->
-<h2>选课记录</h2>
-<table>
-    <thead>
-    <tr>
-        <th>课程编号</th>
-        <th>课程名称</th>
-        <th>选课日期</th>
-        <th>成绩</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="selection : ${selections}">
-        <td th:text="${selection.course.courseCode}"></td>
-        <td th:text="${selection.course.courseName}"></td>
-        <td th:text="${#dates.format(selection.selectionDate, 'yyyy-MM-dd')}"></td>
-        <td th:text="${selection.score}"></td>
-    </tr>
-    </tbody>
-</table>
-
-<!-- 修改用户信息按钮 -->
-<a href="/user/update-profile-form">修改用户信息</a>
-
-<!-- 修改密码按钮 -->
-<a href="/user/change-password-form">修改密码</a>
-
-<!-- 选课按钮 -->
-<a href="/student/select-course">点击选课</a>
-
-<!-- 请假按钮 -->
-<a href="/student/apply-leave">申请请假</a>
-
-<!-- 查看请假记录按钮 -->
-<a href="/student/leave-applications">查看请假记录</a>
-<br>
-<!-- 添加退出登录的功能 -->
-<a href="/auth/logout">退出登录</a>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">欢迎，[[${student.username}]]</h1>
+    <h2 class="text-2xl font-bold mb-4">选课记录</h2>
+    <table class="table-auto w-full bg-white rounded shadow-md">
+        <thead>
+        <tr>
+            <th class="px-4 py-2">课程编号</th>
+            <th class="px-4 py-2">课程名称</th>
+            <th class="px-4 py-2">选课日期</th>
+            <th class="px-4 py-2">成绩</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="selection : ${selections}">
+            <td class="border px-4 py-2" th:text="${selection.course.courseCode}"></td>
+            <td class="border px-4 py-2" th:text="${selection.course.courseName}"></td>
+            <td class="border px-4 py-2" th:text="${#dates.format(selection.selectionDate, 'yyyy-MM-dd')}"></td>
+            <td class="border px-4 py-2" th:text="${selection.score}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="flex flex-wrap gap-4 mt-8 justify-center">
+        <a href="/user/update-profile-form" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">修改用户信息</a>
+        <a href="/user/change-password-form" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">修改密码</a>
+        <a href="/student/select-course" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">点击选课</a>
+        <a href="/student/apply-leave" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">申请请假</a>
+        <a href="/student/leave-applications" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">查看请假记录</a>
+        <a href="/auth/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">退出登录</a>
+    </div>
+</div>
 </body>
 </html>

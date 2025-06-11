@@ -3,54 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <title>管理员课程列表</title>
+  <!-- 引入 Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* 添加自定义样式 */
+    body {
+      background: linear-gradient(135deg, #f4f4f9 0%, #e5e5f7 100%);
+    }
+    table {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    th {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    }
+    button {
+      transition: background-color 0.3s ease;
+    }
+    a {
+      transition: color 0.3s ease;
+    }
+  </style>
 </head>
-<body>
-<h1>管理员课程列表</h1>
+<body class="font-sans bg-gray-100 text-gray-700 p-8">
+<h1 class="text-3xl font-bold text-center text-gray-800 mb-6">管理员课程列表</h1>
 <!-- 添加返回管理员主页面的链接 -->
-<a href="/admin/dashboard">返回管理员主页面</a>
-<a href="/admin/courses/add">添加新课程</a>
-<form action="/admin/courses" method="get">
-  <label for="courseCode">课程编号:</label>
-  <input type="text" id="courseCode" name="courseCode" th:value="${param.courseCode}">
-  <label for="courseName">课程名称:</label>
-  <input type="text" id="courseName" name="courseName" th:value="${param.courseName}">
-  <button type="submit">查询</button>
+<div class="flex justify-start mb-4">
+  <a href="/admin/dashboard" class="text-blue-500 hover:text-blue-600 mr-4">返回管理员主页面</a>
+  <a href="/admin/courses/add" class="text-blue-500 hover:text-blue-600">添加新课程</a>
+</div>
+<form action="/admin/courses" method="get" class="bg-white p-6 rounded-lg shadow-md mb-6">
+  <div class="flex flex-wrap space-x-4 items-center">
+    <label for="courseCode" class="font-medium">课程编号:</label>
+    <input type="text" id="courseCode" name="courseCode" th:value="${param.courseCode}" class="border border-gray-300 rounded-md p-2">
+    <label for="courseName" class="font-medium">课程名称:</label>
+    <input type="text" id="courseName" name="courseName" th:value="${param.courseName}" class="border border-gray-300 rounded-md p-2">
+    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md">查询</button>
+  </div>
 </form>
 <form action="/admin/courses/delete" method="post">
-  <table>
-    <thead>
-    <tr>
-      <!-- 添加一个全选的复选框，能够选中全部的数据 -->
-      <th>
-        <label for="selectAll">全选</label>
-        <input type="checkbox" id="selectAll"/>
-      </th>
-      <th>课程编号</th>
-      <th>课程名称</th>
-      <th>授课老师</th>
-      <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="course : ${courses}">
-      <td>
-        <label th:for="${'checkbox_' + course.courseCode}">选择</label>
-        <input type="checkbox" id="${'checkbox_' + course.courseCode}" name="courseCodes" th:value="${course.courseCode}"/>
-      </td>
-      <td th:text="${course.courseCode}"></td>
-      <td th:text="${course.courseName}"></td>
-      <td th:text="${course.teacher != null ? course.teacher.username : '无'}"></td>
-      <td>
-        <a th:href="@{/admin/courses/edit/{courseCode}(courseCode=${course.courseCode})}">编辑</a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
-  <button type="submit">删除选中项</button>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white rounded-lg shadow-md">
+      <thead>
+      <tr>
+        <!-- 添加一个全选的复选框，能够选中全部的数据 -->
+        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+          <label for="selectAll">全选</label>
+          <input type="checkbox" id="selectAll" class="ml-2">
+        </th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">课程编号</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">课程名称</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">授课老师</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="course : ${courses}" class="hover:bg-gray-100">
+        <td class="px-6 py-4 whitespace-nowrap">
+          <label th:for="${'checkbox_' + course.courseCode}" class="mr-2">选择</label>
+          <input type="checkbox" id="${'checkbox_' + course.courseCode}" name="courseCodes" th:value="${course.courseCode}" class="form-checkbox">
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap" th:text="${course.courseCode}"></td>
+        <td class="px-6 py-4 whitespace-nowrap" th:text="${course.courseName}"></td>
+        <td class="px-6 py-4 whitespace-nowrap" th:text="${course.teacher != null ? course.teacher.username : '无'}"></td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <a th:href="@{/admin/courses/edit/{courseCode}(courseCode=${course.courseCode})}" class="text-blue-500 hover:text-blue-600">编辑</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <button type="submit" class="mt-6 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md">删除选中项</button>
 </form>
-<div>
-  <a th:href="@{/admin/courses(page=${currentPage - 1})}" th:if="${currentPage > 0}">上一页</a>
-  <a th:href="@{/admin/courses(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">下一页</a>
+<div class="pagination flex justify-center mt-6">
+  <a th:href="@{/admin/courses(page=${currentPage - 1})}" th:if="${currentPage > 0}" class="text-blue-500 hover:text-blue-600 mr-4">上一页</a>
+  <a th:href="@{/admin/courses(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}" class="text-blue-500 hover:text-blue-600">下一页</a>
 </div>
 <script>
   document.getElementById('selectAll').addEventListener('change', function () {

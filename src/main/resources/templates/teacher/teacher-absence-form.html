@@ -3,24 +3,25 @@
 <head>
   <meta charset="utf-8">
   <title>缺课记录</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>缺课记录</h1>
-<form th:action="@{/teacher/course/detail/{courseId}/absence/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}" method="post">
+<body class="bg-gray-100 p-8">
+<h1 class="text-3xl font-bold mb-4">缺课记录</h1>
+<form th:action="@{/teacher/course/detail/{courseId}/absence/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}" method="post" class="mb-8">
   <input type="hidden" th:name="selectionId" th:value="${selection.id}">
-  <button type="submit">记录缺课</button>
+  <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">记录缺课</button>
 </form>
 
-<h2>该学生该课程的所有缺课记录</h2>
-<table>
+<h2 class="text-2xl font-bold mb-4">该学生该课程的所有缺课记录</h2>
+<table class="table-auto w-full bg-white shadow-md rounded mb-4">
   <thead>
   <tr>
-    <th>缺课日期</th>
+    <th class="px-4 py-2 bg-gray-200">缺课日期</th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="absence : ${absences}">
-    <td>[[${#dates.format(absence.attendanceDate, 'yyyy-MM-dd')}]]</td>
+    <td class="border px-4 py-2">[[${#dates.format(absence.attendanceDate, 'yyyy-MM-dd')}]]</td>
   </tr>
   </tbody>
 </table>

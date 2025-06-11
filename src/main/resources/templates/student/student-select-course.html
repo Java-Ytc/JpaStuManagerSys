@@ -3,36 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <title>学生选课</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>学生选课</h1>
-<p th:if="${message}" style="color: green;">[[${message}]]</p>
-<p th:if="${error}" style="color: red;">[[${error}]]</p>
-<table>
-  <thead>
-  <tr>
-    <th>课程编号</th>
-    <th>课程名称</th>
-    <th>当前人数</th>
-    <th>最大人数</th>
-    <th>操作</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="course : ${courses}">
-    <td th:text="${course.courseCode}"></td>
-    <td th:text="${course.courseName}"></td>
-    <td th:text="${course.currentStudents}"></td>
-    <td th:text="${course.maxStudents}"></td>
-    <td>
-      <form action="/student/select-course" method="post">
-        <input type="hidden" th:value="${course.id}" name="courseId">
-        <input type="submit" value="选课" th:disabled="${course.currentStudents >= course.maxStudents}">
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
-<a href="/student/dashboard">返回学生主页</a>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto py-8">
+  <h1 class="text-3xl font-bold text-center mb-8">学生选课</h1>
+  <p th:if="${message}" class="text-green-500 text-center mb-4">[[${message}]]</p>
+  <p th:if="${error}" class="text-red-500 text-center mb-4">[[${error}]]</p>
+  <table class="table-auto w-full bg-white rounded shadow-md">
+    <thead>
+    <tr>
+      <th class="px-4 py-2">课程编号</th>
+      <th class="px-4 py-2">课程名称</th>
+      <th class="px-4 py-2">当前人数</th>
+      <th class="px-4 py-2">最大人数</th>
+      <th class="px-4 py-2">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="course : ${courses}">
+      <td class="border px-4 py-2" th:text="${course.courseCode}"></td>
+      <td class="border px-4 py-2" th:text="${course.courseName}"></td>
+      <td class="border px-4 py-2" th:text="${course.currentStudents}"></td>
+      <td class="border px-4 py-2" th:text="${course.maxStudents}"></td>
+      <td class="border px-4 py-2">
+        <form action="/student/select-course" method="post">
+          <input type="hidden" th:value="${course.id}" name="courseId">
+          <input type="submit" value="选课" th:disabled="${course.currentStudents >= course.maxStudents}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="text-center mt-4">
+    <a href="/student/dashboard" class="text-blue-500 hover:underline">返回学生主页</a>
+  </div>
+</div>
 </body>
 </html>

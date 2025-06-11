@@ -3,20 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <title>学生请假申请</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>学生请假申请</h1>
-<p th:if="${message}" style="color: green;">[[${message}]]</p>
-<p th:if="${error}" style="color: red;">[[${error}]]</p>
-<form action="/student/apply-leave" method="post">
-  <label for="startDate">开始日期:</label>
-  <input type="date" id="startDate" name="startDate" required><br><br>
-  <label for="endDate">结束日期:</label>
-  <input type="date" id="endDate" name="endDate" required><br><br>
-  <label for="reason">请假原因:</label>
-  <textarea id="reason" name="reason" required></textarea><br><br>
-  <input type="submit" value="提交申请">
-</form>
-<a href="/student/dashboard">返回学生主页</a>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto py-8">
+  <h1 class="text-3xl font-bold text-center mb-8">学生请假申请</h1>
+  <p th:if="${message}" class="text-green-500 text-center mb-4">[[${message}]]</p>
+  <p th:if="${error}" class="text-red-500 text-center mb-4">[[${error}]]</p>
+  <form action="/student/apply-leave" method="post" class="bg-white p-8 rounded shadow-md max-w-md mx-auto">
+    <div class="mb-4">
+      <label for="startDate" class="block text-gray-700 text-sm font-bold mb-2">开始日期:</label>
+      <input type="date" id="startDate" name="startDate" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-4">
+      <label for="endDate" class="block text-gray-700 text-sm font-bold mb-2">结束日期:</label>
+      <input type="date" id="endDate" name="endDate" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
+    <div class="mb-6">
+      <label for="reason" class="block text-gray-700 text-sm font-bold mb-2">请假原因:</label>
+      <textarea id="reason" name="reason" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+    </div>
+    <div class="flex justify-center">
+      <input type="submit" value="提交申请" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+    </div>
+  </form>
+  <div class="text-center mt-4">
+    <a href="/student/dashboard" class="text-blue-500 hover:underline">返回学生主页</a>
+  </div>
+</div>
 </body>
 </html>

@@ -2,47 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <!-- 引入Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <title>教师详细信息</title>
 </head>
-<body>
-<h1>教师详细信息</h1>
-<h2>基本信息</h2>
-<p>教师编号: <span th:text="${teacher.userCode}"></span></p>
-<p>用户名: <span th:text="${teacher.username}"></span></p>
-<p>邮箱: <span th:text="${teacher.email}"></span></p>
-<p>电话: <span th:text="${teacher.phone}"></span></p>
-<p>角色: <span th:text="${teacher.role}"></span></p>
-
-<h2>授课课程</h2>
-<form action="#" th:action="@{/admin/teachers/{userCode}/dissociate-courses(userCode=${teacher.userCode})}" method="post">
-  <table>
-    <thead>
-    <tr>
-      <th>
-        <label for="selectAll">全选</label>
-        <input type="checkbox" id="selectAll"/>
-      </th>
-      <th>课程编号</th>
-      <th>课程名称</th>
-      <th>操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="course : ${courses}">
-      <td>
-        <label th:for="${'checkbox_' + course.courseCode}">选择</label>
-        <input type="checkbox" id="${'checkbox_' + course.courseCode}" name="courseCodes" th:value="${course.courseCode}"/>
-      </td>
-      <td th:text="${course.courseCode}"></td>
-      <td th:text="${course.courseName}"></td>
-    </tr>
-    </tbody>
-  </table>
-  <button type="submit">退课</button>
-</form>
-<div>
-  <a href="/admin/teachers">返回教师列表</a>
-  <a th:href="@{/admin/teachers/{userCode}/assign-courses(userCode=${teacher.userCode})}">授课</a>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-8">
+  <h1 class="text-3xl font-bold mb-4">教师详细信息</h1>
+  <div class="bg-white p-6 rounded-md shadow-md mb-8">
+    <h2 class="text-2xl font-bold mb-4">基本信息</h2>
+    <p class="mb-2"><span class="font-bold">教师编号:</span> <span th:text="${teacher.userCode}"></span></p>
+    <p class="mb-2"><span class="font-bold">用户名:</span> <span th:text="${teacher.username}"></span></p>
+    <p class="mb-2"><span class="font-bold">邮箱:</span> <span th:text="${teacher.email}"></span></p>
+    <p class="mb-2"><span class="font-bold">电话:</span> <span th:text="${teacher.phone}"></span></p>
+    <p><span class="font-bold">角色:</span> <span th:text="${teacher.role}"></span></p>
+  </div>
+  <div class="bg-white p-6 rounded-md shadow-md mb-8">
+    <h2 class="text-2xl font-bold mb-4">授课课程</h2>
+    <form action="#" th:action="@{/admin/teachers/{userCode}/dissociate-courses(userCode=${teacher.userCode})}" method="post">
+      <table class="w-full border-collapse">
+        <thead>
+        <tr class="bg-gray-200">
+          <th class="px-4 py-2 text-left">
+            <label for="selectAll">全选</label>
+            <input type="checkbox" id="selectAll" class="ml-2">
+          </th>
+          <th class="px-4 py-2 text-left">课程编号</th>
+          <th class="px-4 py-2 text-left">课程名称</th>
+          <th class="px-4 py-2 text-left">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${courses}" class="border-t">
+          <td class="px-4 py-2">
+            <label th:for="${'checkbox_' + course.courseCode}">选择</label>
+            <input type="checkbox" id="${'checkbox_' + course.courseCode}" name="courseCodes" th:value="${course.courseCode}" class="ml-2">
+          </td>
+          <td class="px-4 py-2" th:text="${course.courseCode}"></td>
+          <td class="px-4 py-2" th:text="${course.courseName}"></td>
+        </tr>
+        </tbody>
+      </table>
+      <button type="submit" class="bg-red-500 text-white py-2 px-4 rounded-md mt-4 hover:bg-red-600">退课</button>
+    </form>
+  </div>
+  <div>
+    <a href="/admin/teachers" class="bg-blue-500 text-white py-2 px-4 rounded-md mr-2 hover:bg-blue-600">返回教师列表</a>
+    <a th:href="@{/admin/teachers/{userCode}/assign-courses(userCode=${teacher.userCode})}" class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">授课</a>
+  </div>
 </div>
 <script>
   document.getElementById('selectAll').addEventListener('change', function () {

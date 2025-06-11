@@ -4,187 +4,243 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理员仪表盘</title>
-    <style>
-        /* 全局样式 */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            position: relative; /* 添加相对定位 */
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 配置Tailwind自定义颜色 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#8B5CF6',
+                        neutral: '#1F2937',
+                        'base-100': '#F9FAFB',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
         }
-
-        /* 标题样式 */
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin: 40px 0;
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* 统计信息容器样式 */
-        .stats-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        /* 统计信息卡片样式 */
-        .stats-card {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 200px;
-            transition: transform 0.3s ease;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
-
-        /* 管理模块容器样式 */
-        .management-container {
-            width: 90%;
-            max-width: 1000px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        /* 管理模块标题样式 */
-        .management-title {
-            background-color: #3498db;
-            color: #fff;
-            padding: 15px 20px;
-            text-align: center;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            position: relative;
-            transition: background-color 0.3s ease;
-        }
-
-        .management-title:hover {
-            background-color: #2980b9;
-        }
-
-        /* 管理模块操作列表样式 */
-        .management-actions {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1;
-        }
-
-        .management-title:hover .management-actions {
-            display: block;
-        }
-
-        /* 操作链接样式 */
-        .action-link {
-            display: block;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.3s ease;
-        }
-
-        .action-link:last-child {
-            border-bottom: none;
-        }
-
-        .action-link:hover {
-            background-color: #f5f5f5;
-        }
-
-        /* 退出登录按钮样式 */
-        .logout-button {
-            position: absolute; /* 添加绝对定位 */
-            top: 20px; /* 距离顶部 20px */
-            right: 20px; /* 距离右侧 20px */
-            background-color: #3498db;
-            color: #fff;
-            padding: 15px 20px;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .logout-button:hover {
-            background-color: #2980b9;
-            transform: scale(1.05);
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .dashboard-card {
+                @apply bg-white rounded-lg shadow-md p-6;
+            }
+            .stat-card {
+                @apply bg-white rounded-lg shadow-md p-4 text-center;
+            }
+            .nav-item {
+                @apply flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary rounded-md transition-colors;
+            }
         }
     </style>
 </head>
-<body>
-<a class="logout-button" href="/auth/logout">退出登录</a>
-<h1>管理员仪表盘</h1>
-<div class="stats-container">
-    <div class="stats-card">
-        <p>学生总数: <span th:text="${totalStudents}"></span></p>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+<!-- 顶部导航栏 -->
+<header class="bg-white shadow-sm fixed top-0 left-0 right-0 z-10">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-primary">管理员仪表盘</h1>
+        <a href="/auth/logout" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors">
+            <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            退出登录
+        </a>
     </div>
-    <div class="stats-card">
-        <p>教师总数: <span th:text="${totalTeachers}"></span></p>
-    </div>
-</div>
-<div class="management-container">
-    <!-- 学生管理 -->
-    <div class="management-title">
-        学生管理
-        <div class="management-actions">
-            <a class="action-link" href="/admin/students">查看学生</a>
-            <a class="action-link" href="/admin/students/add">添加学生</a>
+</header>
+
+<!-- 主内容区 -->
+<main class="container mx-auto px-4 pt-24 pb-12">
+    <!-- 统计卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="stat-card">
+            <h3 class="text-lg font-semibold text-gray-600 mb-2">学生总数</h3>
+            <p class="text-3xl font-bold text-primary" th:text="${totalStudents}"></p>
+            <div class="h-1 w-full bg-gray-200 rounded-full mt-4">
+                <div class="h-1 bg-primary rounded-full" style="width: 75%"></div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <h3 class="text-lg font-semibold text-gray-600 mb-2">教师总数</h3>
+            <p class="text-3xl font-bold text-secondary" th:text="${totalTeachers}"></p>
+            <div class="h-1 w-full bg-gray-200 rounded-full mt-4">
+                <div class="h-1 bg-secondary rounded-full" style="width: 45%"></div>
+            </div>
         </div>
     </div>
-    <!-- 教师管理 -->
-    <div class="management-title">
-        教师管理
-        <div class="management-actions">
-            <a class="action-link" href="/admin/teachers">查看教师</a>
-            <a class="action-link" href="/admin/teachers/add">添加教师</a>
+
+    <!-- 功能模块 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 学生管理 -->
+        <div class="dashboard-card">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-3 text-xl font-bold text-gray-800">学生管理</h2>
+            </div>
+            <div class="space-y-2">
+                <a href="/admin/students" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    查看学生
+                </a>
+                <a href="/admin/students/add" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    添加学生
+                </a>
+            </div>
+        </div>
+
+        <!-- 教师管理 -->
+        <div class="dashboard-card">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-secondary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-3 text-xl font-bold text-gray-800">教师管理</h2>
+            </div>
+            <div class="space-y-2">
+                <a href="/admin/teachers" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    查看教师
+                </a>
+                <a href="/admin/teachers/add" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    添加教师
+                </a>
+            </div>
+        </div>
+
+        <!-- 班级管理 -->
+        <div class="dashboard-card">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-accent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-3 text-xl font-bold text-gray-800">班级管理</h2>
+            </div>
+            <div class="space-y-2">
+                <a href="/admin/classes" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    查看班级
+                </a>
+                <a href="/admin/classes/add" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    添加班级
+                </a>
+            </div>
+        </div>
+
+        <!-- 课程管理 -->
+        <div class="dashboard-card">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-3 text-xl font-bold text-gray-800">课程管理</h2>
+            </div>
+            <div class="space-y-2">
+                <a href="/admin/courses" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    查看课程
+                </a>
+                <a href="/admin/courses/add" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    添加课程
+                </a>
+            </div>
+        </div>
+
+        <!-- 成绩管理 -->
+        <div class="dashboard-card">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-3 text-xl font-bold text-gray-800">成绩管理</h2>
+            </div>
+            <div class="space-y-2">
+                <a href="/admin/scores" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    查看成绩
+                </a>
+                <a href="/admin/scores/add" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    添加成绩
+                </a>
+            </div>
+        </div>
+
+        <!-- 系统设置 -->
+        <div class="dashboard-card">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <h2 class="ml-3 text-xl font-bold text-gray-800">系统设置</h2>
+            </div>
+            <div class="space-y-2">
+                <a href="/admin/settings" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    系统设置
+                </a>
+                <a href="#" class="nav-item">
+                    <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                    系统日志
+                </a>
+            </div>
         </div>
     </div>
-    <!-- 班级管理 -->
-    <div class="management-title">
-        班级管理
-        <div class="management-actions">
-            <a class="action-link" href="/admin/classes">查看班级</a>
-            <a class="action-link" href="/admin/classes/add">添加班级</a>
-        </div>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-white shadow-inner py-6">
+    <div class="container mx-auto px-4 text-center text-gray-600">
+        <p>© 2025 学生管理系统 - 管理员平台</p>
+        <p class="mt-2 text-sm">最后更新时间: <span th:text="${lastUpdateTime}"></span></p>
     </div>
-    <!-- 课程管理 -->
-    <div class="management-title">
-        课程管理
-        <div class="management-actions">
-            <a class="action-link" href="/admin/courses">查看课程</a>
-            <a class="action-link" href="/admin/courses/add">添加课程</a>
-        </div>
-    </div>
-    <!-- 审批管理 -->
-    <div class="management-title">
-        审批管理
-        <div class="management-actions">
-            <a class="action-link" href="/admin/leave-applications/pending">审批请假</a>
-        </div>
-    </div>
-</div>
+</footer>
 </body>
 </html>

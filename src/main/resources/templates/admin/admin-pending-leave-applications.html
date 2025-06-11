@@ -2,37 +2,51 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
+  <!-- 引入Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <title>待审批的请假申请</title>
 </head>
-<body>
-<h1>待审批的请假申请</h1>
-<table>
-  <thead>
-  <tr>
-    <th>学生姓名</th>
-    <th>开始日期</th>
-    <th>结束日期</th>
-    <th>请假原因</th>
-    <th>操作</th>
-  </tr>
-  </thead>
-  <tbody>
-  <!-- 将迭代变量名从 application 改为 leaveApplication -->
-  <tr th:each="leaveApplication : ${pendingApplications}">
-    <td th:text="${leaveApplication.student.username}"></td>
-    <td th:text="${leaveApplication.startDate}"></td>
-    <td th:text="${leaveApplication.endDate}"></td>
-    <td th:text="${leaveApplication.reason}"></td>
-    <td>
-      <form th:action="@{/admin/leave-applications/{leaveId}/approve(leaveId=${leaveApplication.id})}" method="post">
-        <button type="submit">批准</button>
-      </form>
-      <form th:action="@{/admin/leave-applications/{leaveId}/reject(leaveId=${leaveApplication.id})}" method="post">
-        <button type="submit">拒绝</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto py-8">
+  <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">待审批的请假申请</h1>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-300 rounded-md shadow-md">
+      <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学生姓名</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">开始日期</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">结束日期</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">请假原因</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+      </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+      <!-- 将迭代变量名从 application 改为 leaveApplication -->
+      <tr th:each="leaveApplication : ${pendingApplications}">
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          <span th:text="${leaveApplication.student.username}"></span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          <span th:text="${leaveApplication.startDate}"></span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          <span th:text="${leaveApplication.endDate}"></span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          <span th:text="${leaveApplication.reason}"></span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap space-x-2">
+          <form th:action="@{/admin/leave-applications/{leaveId}/approve(leaveId=${leaveApplication.id})}" method="post" class="inline">
+            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-50">批准</button>
+          </form>
+          <form th:action="@{/admin/leave-applications/{leaveId}/reject(leaveId=${leaveApplication.id})}" method="post" class="inline">
+            <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50">拒绝</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 </body>
 </html>

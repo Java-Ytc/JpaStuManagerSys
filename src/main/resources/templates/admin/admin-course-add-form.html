@@ -3,18 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>添加课程信息</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>添加课程信息</h1>
-<form action="/admin/courses/save" method="post" th:object="${course}">
-    <label for="courseName">课程名称:</label>
-    <input type="text" id="courseName" name="courseName" th:field="*{courseName}" required><br>
-    <label for="maxStudents">最大学生数:</label>
-    <input type="number" id="maxStudents" name="maxStudents" th:field="*{maxStudents}" required><br>
-    <label for="courseTime">课程时间:</label>
-    <input type="text" id="courseTime" name="courseTime" th:field="*{courseTime}" required><br>
-    <button type="submit">保存</button>
-</form>
-<a href="/admin/courses">返回课程列表</a>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">添加课程信息</h1>
+    <form action="/admin/courses/save" method="post" th:object="${course}" class="bg-white p-8 rounded shadow-md max-w-md mx-auto">
+        <div class="mb-4">
+            <label for="courseName" class="block text-gray-700 font-bold mb-2">课程名称:</label>
+            <input type="text" id="courseName" name="courseName" th:field="*{courseName}" required class="border border-gray-300 p-2 w-full rounded focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="mb-4">
+            <label for="maxStudents" class="block text-gray-700 font-bold mb-2">最大学生数:</label>
+            <input type="number" id="maxStudents" name="maxStudents" th:field="*{maxStudents}" required class="border border-gray-300 p-2 w-full rounded focus:outline-none focus:border-blue-500">
+        </div>
+        <div class="mb-6">
+            <label for="courseTime" class="block text-gray-700 font-bold mb-2">课程时间:</label>
+            <input type="text" id="courseTime" name="courseTime" th:field="*{courseTime}" required class="border border-gray-300 p-2 w-full rounded focus:outline-none focus:border-blue-500">
+        </div>
+        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300">保存</button>
+    </form>
+    <div class="text-center mt-6">
+        <a href="/admin/courses" class="text-blue-500 hover:underline">返回课程列表</a>
+    </div>
+</div>
 </body>
 </html>

@@ -3,69 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>管理员学生列表</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>管理员学生列表</h1>
-<a href="/admin/dashboard">返回管理员主页面</a>
-<a href="/admin/students/add">添加学生</a>
-<form action="/admin/students" method="get">
-    <label for="userCode">学生编号:</label>
-    <input type="text" id="userCode" name="userCode"/>
-    <label for="username">用户名:</label>
-    <input type="text" id="username" name="username"/>
-    <label for="classCode">班级编号:</label>
-    <input type="text" id="classCode" name="classCode"/>
-    <button type="submit">搜索</button>
-</form>
-<form action="/admin/students/delete" method="post">
-    <table>
-        <thead>
-        <tr>
-            <!-- 添加一个全选的复选框，能够选中全部的数据 -->
-            <th>
-                <label for="selectAll">全选</label>
-                <input type="checkbox" id="selectAll"/>
-            </th>
-            <th>学生编号</th>
-            <th>用户名</th>
-            <th>邮箱</th>
-            <th>电话</th>
-            <th>班级</th>
-            <th>操作</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- 检查是否有学生数据 -->
-        <tr th:if="${noStudentsMessage}">
-            <td colspan="7" th:text="${noStudentsMessage}"></td>
-        </tr>
-        <!-- 遍历学生列表，为每一个学生数据生成一行表格数据 -->
-        <tr th:each="student : ${students}">
-            <!-- 选中学生数据中的 userCode 作为删除时的参数传递到 AdminController -->
-            <td>
-                <label th:for="${'checkbox_' + student.userCode}">选择</label>
-                <input type="checkbox" id="${'checkbox_' + student.userCode}" name="userCodes" th:value="${student.userCode}"/>
-            </td>
-            <td th:text="${student.userCode}"></td>
-            <td th:text="${student.username}"></td>
-            <td th:text="${student.email}"></td>
-            <td th:text="${student.phone}"></td>
-            <td th:text="${student.clazz != null ? student.clazz.className : '无班级信息'}"></td>
-            <td>
-                <a th:href="@{/admin/students/edit/{userCode}(userCode=${student.userCode})}">编辑</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <button type="submit">删除选中项</button>
-</form>
-<div>
-    <a th:href="@{/admin/students(page=${currentPage - 1})}" th:if="${currentPage > 0}">上一页</a>
-    <a th:href="@{/admin/students(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}">下一页</a>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-8">
+    <h1 class="text-3xl font-bold mb-4">管理员学生列表</h1>
+    <div class="flex space-x-4 mb-4">
+        <a href="/admin/dashboard" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">返回管理员主页面</a>
+        <a href="/admin/students/add" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">添加学生</a>
+    </div>
+    <form action="/admin/students" method="get" class="bg-white shadow-md rounded p-6 mb-4">
+        <div class="flex space-x-4">
+            <div>
+                <label for="userCode" class="block text-gray-700 text-sm font-bold mb-2">学生编号:</label>
+                <input type="text" id="userCode" name="userCode" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div>
+                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">用户名:</label>
+                <input type="text" id="username" name="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div>
+                <label for="classCode" class="block text-gray-700 text-sm font-bold mb-2">班级编号:</label>
+                <input type="text" id="classCode" name="classCode" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">搜索</button>
+            </div>
+        </div>
+    </form>
+    <form action="/admin/students/delete" method="post" class="bg-white shadow-md rounded p-6">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+            <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <label for="selectAll" class="flex items-center">
+                        <input type="checkbox" id="selectAll" class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out">
+                        <span class="ml-2">全选</span>
+                    </label>
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学生编号</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">用户名</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">邮箱</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">电话</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">班级</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+            </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+            <tr th:if="${noStudentsMessage}">
+                <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span th:text="${noStudentsMessage}"></span>
+                </td>
+            </tr>
+            <tr th:each="student : ${students}">
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <label for="${'checkbox_' + student.userCode}" class="flex items-center">
+                        <input type="checkbox" id="${'checkbox_' + student.userCode}" name="userCodes" th:value="${student.userCode}" class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out">
+                        <span class="ml-2">选择</span>
+                    </label>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${student.userCode}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${student.username}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${student.email}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${student.phone}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${student.clazz != null ? student.clazz.className : '无班级信息'}"></td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <a th:href="@{/admin/students/edit/{userCode}(userCode=${student.userCode})}" class="text-blue-500 hover:text-blue-700">编辑</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="mt-4">
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">删除选中项</button>
+        </div>
+    </form>
+    <div class="flex space-x-4 mt-4">
+        <a th:href="@{/admin/students(page=${currentPage - 1})}" th:if="${currentPage > 0}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">上一页</a>
+        <a th:href="@{/admin/students(page=${currentPage + 1})}" th:if="${currentPage < totalPages - 1}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">下一页</a>
+    </div>
 </div>
 <script>
     document.getElementById('selectAll').addEventListener('change', function () {
-        // 通过 userCode 选中全部的数据
         const checkboxes = document.querySelectorAll('input[name="userCodes"]');
         checkboxes.forEach((checkbox) => {
             checkbox.checked = this.checked;

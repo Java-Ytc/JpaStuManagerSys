@@ -3,35 +3,42 @@
 <head>
     <meta charset="utf-8">
     <title>为班级分配学生</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 使用 link 标签引入 Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>为班级 [[${clazz.className}]] 分配学生</h1>
-<form action="#" th:action="@{/admin/classes/{classCode}/assign-students(classCode=${clazz.classCode})}" method="post">
-    <table>
-        <thead>
-        <tr>
-            <th>选择</th>
-            <th>学生编号</th>
-            <th>学生姓名</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="student : ${unassignedStudents}">
-            <td>
-                <input type="checkbox" id="student-[[${student.userCode}]]" name="userCodes" th:value="${student.userCode}" />
-                <label for="student-[[${student.userCode}]]"></label>
-            </td>
-            <td>
-                <label for="student-[[${student.userCode}]]" th:text="${student.userCode}"></label>
-            </td>
-            <td>
-                <label for="student-[[${student.userCode}]]" th:text="${student.username}"></label>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <button type="submit">分配学生</button>
-</form>
-<a href="/admin/classes">返回班级列表</a>
+<body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center font-sans">
+<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">为班级 <span th:text="${clazz.className}"></span> 分配学生</h1>
+    <form action="#" th:action="@{/admin/classes/{classCode}/assign-students(classCode=${clazz.classCode})}" method="post">
+        <table class="w-full border-collapse rounded-md overflow-hidden shadow-md">
+            <thead class="bg-blue-500 text-white">
+            <tr>
+                <th class="px-6 py-3 text-left text-sm font-medium">选择</th>
+                <th class="px-6 py-3 text-left text-sm font-medium">学生编号</th>
+                <th class="px-6 py-3 text-left text-sm font-medium">学生姓名</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="student : ${unassignedStudents}" class="hover:bg-gray-100">
+                <td class="px-6 py-4">
+                    <label th:for="'student-' + ${student.userCode}" class="flex items-center cursor-pointer">
+                        <input type="checkbox" th:id="'student-' + ${student.userCode}" name="userCodes" th:value="${student.userCode}" class="mr-2">
+                        <span th:text="'选择 ' + ${student.username} + '（编号：' + ${student.userCode} + '）'"></span>
+                    </label>
+                </td>
+                <td class="px-6 py-4">
+                    <label th:for="'student-' + ${student.userCode}" th:text="${student.userCode}"></label>
+                </td>
+                <td class="px-6 py-4">
+                    <label th:for="'student-' + ${student.userCode}" th:text="${student.username}"></label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit" class="block mx-auto bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 mt-6">分配学生</button>
+    </form>
+    <a href="/admin/classes" class="text-blue-500 hover:underline block text-center mt-4">返回班级列表</a>
+</div>
 </body>
 </html>

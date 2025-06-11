@@ -3,31 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>教师主页</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>欢迎，[[${teacher.username}]]</h1>
-<p>编号: [[${teacher.userCode}]]</p>
-<p>邮箱: [[${teacher.email}]]</p>
-<p>电话: [[${teacher.phone}]]</p>
+<body class="bg-gray-100 p-8">
+<h1 class="text-3xl font-bold mb-2">欢迎，[[${teacher.username}]]</h1>
+<p class="text-gray-600 mb-1">编号: [[${teacher.userCode}]]</p>
+<p class="text-gray-600 mb-1">邮箱: [[${teacher.email}]]</p>
+<p class="text-gray-600 mb-4">电话: [[${teacher.phone}]]</p>
 
-<h2>您所教授的课程</h2>
-<table>
+<h2 class="text-2xl font-bold mb-4">您所教授的课程</h2>
+<table class="table-auto w-full bg-white shadow-md rounded mb-4">
     <thead>
     <tr>
-        <th>课程编号</th>
-        <th>课程名称</th>
-        <th>操作</th>
+        <th class="px-4 py-2 bg-gray-200">课程编号</th>
+        <th class="px-4 py-2 bg-gray-200">课程名称</th>
+        <th class="px-4 py-2 bg-gray-200">操作</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="course : ${courses}">
-        <td>[[${course.courseCode}]]</td>
-        <td>[[${course.courseName}]]</td>
-        <td><a th:href="@{/teacher/course/detail/{courseCode}/{courseId}(courseCode=${course.courseCode}, courseId=${course.id})}">详细</a></td>
+        <td class="border px-4 py-2">[[${course.courseCode}]]</td>
+        <td class="border px-4 py-2">[[${course.courseName}]]</td>
+        <td class="border px-4 py-2">
+            <a th:href="@{/teacher/course/detail/{courseCode}/{courseId}(courseCode=${course.courseCode}, courseId=${course.id})}" class="text-blue-500 hover:text-blue-600">详细</a>
+        </td>
     </tr>
     </tbody>
 </table>
 <!-- 添加退出登录的功能 -->
-<a href="/auth/logout">退出登录</a>
+<a href="/auth/logout" class="text-red-500 hover:text-red-600">退出登录</a>
 </body>
 </html>

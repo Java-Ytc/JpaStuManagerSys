@@ -3,47 +3,48 @@
 <head>
   <meta charset="utf-8">
   <title>课程详细信息</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>课程: [[${course.courseName}]]</h1>
-<h2>选课学生信息</h2>
-<table>
+<body class="bg-gray-100 p-8">
+<h1 class="text-3xl font-bold mb-4">课程: [[${course.courseName}]]</h1>
+<h2 class="text-2xl font-bold mb-4">选课学生信息</h2>
+<table class="table-auto w-full bg-white shadow-md rounded mb-4">
   <thead>
   <tr>
-    <th>学生编号</th>
-    <th>学生姓名</th>
-    <th>分数</th>
-    <th>操作</th>
-    <th>缺课操作</th>
-    <th>查看缺课记录</th> <!-- 添加新的列 -->
+    <th class="px-4 py-2 bg-gray-200">学生编号</th>
+    <th class="px-4 py-2 bg-gray-200">学生姓名</th>
+    <th class="px-4 py-2 bg-gray-200">分数</th>
+    <th class="px-4 py-2 bg-gray-200">操作</th>
+    <th class="px-4 py-2 bg-gray-200">缺课操作</th>
+    <th class="px-4 py-2 bg-gray-200">查看缺课记录</th> <!-- 添加新的列 -->
   </tr>
   </thead>
   <tbody>
   <tr th:each="selection : ${selections}">
-    <td>[[${selection.student.userCode}]]</td>
-    <td>[[${selection.student.username}]]</td>
-    <td>
+    <td class="border px-4 py-2">[[${selection.student.userCode}]]</td>
+    <td class="border px-4 py-2">[[${selection.student.username}]]</td>
+    <td class="border px-4 py-2">
       <form th:action="@{/teacher/course/detail/{courseId}/score(courseId=${course.id})}" method="post">
         <input type="hidden" th:name="selectionId" th:value="${selection.id}">
         <!-- 添加 label 标签 -->
-        <label for="scoreInput">分数:</label>
-        <input type="number" step="0.01" th:name="score" id="scoreInput" th:value="${selection.score != null ? selection.score : ''}">
-        <button type="submit">保存</button>
+        <label for="scoreInput" class="mr-2">分数:</label>
+        <input type="number" step="0.01" th:name="score" id="scoreInput" th:value="${selection.score != null ? selection.score : ''}" class="border px-2 py-1 rounded">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-2 rounded ml-2">保存</button>
       </form>
     </td>
-    <td>
+    <td class="border px-4 py-2">
       <!-- 可以添加其他操作按钮 -->
     </td>
-    <td>
-      <a th:href="@{/teacher/course/detail/{courseId}/absence/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}">缺课</a>
+    <td class="border px-4 py-2">
+      <a th:href="@{/teacher/course/detail/{courseId}/absence/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}" class="text-blue-500 hover:text-blue-600">缺课</a>
     </td>
-    <td>
-      <a th:href="@{/teacher/course/detail/{courseId}/absence/records/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}">查看缺课记录</a> <!-- 添加新的链接 -->
+    <td class="border px-4 py-2">
+      <a th:href="@{/teacher/course/detail/{courseId}/absence/records/{selectionId}(courseId=${course.id}, selectionId=${selection.id})}" class="text-blue-500 hover:text-blue-600">查看缺课记录</a> <!-- 添加新的链接 -->
     </td>
   </tr>
   </tbody>
 </table>
 <!-- 添加返回教师面板链接 -->
-<a href="/teacher/dashboard">返回教师主页面</a>
+<a href="/teacher/dashboard" class="text-blue-500 hover:text-blue-600">返回教师主页面</a>
 </body>
 </html>

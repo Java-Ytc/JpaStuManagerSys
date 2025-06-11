@@ -3,28 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <title>学生请假记录</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>学生请假记录</h1>
-<table>
-  <thead>
-  <tr>
-    <th>开始日期</th>
-    <th>结束日期</th>
-    <th>请假原因</th>
-    <th>状态</th> <!-- 添加状态列 -->
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="leaveApplication : ${leaveApplications}">
-    <td th:text="${#temporals.format(leaveApplication.startDate, 'yyyy-MM-dd')}"></td>
-    <td th:text="${#temporals.format(leaveApplication.endDate, 'yyyy-MM-dd')}"></td>
-    <td th:text="${leaveApplication.reason}"></td>
-    <!-- 根据状态显示相应的文本 -->
-    <td th:text="${leaveApplication.status.name() == 'PENDING' ? '待审核' : (leaveApplication.status.name() == 'APPROVED' ? '批准' : '拒绝')}"></td>
-  </tr>
-  </tbody>
-</table>
-<a href="/student/dashboard">返回学生主页</a>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto py-8">
+  <h1 class="text-3xl font-bold text-center mb-8">学生请假记录</h1>
+  <table class="table-auto w-full bg-white rounded shadow-md">
+    <thead>
+    <tr>
+      <th class="px-4 py-2">开始日期</th>
+      <th class="px-4 py-2">结束日期</th>
+      <th class="px-4 py-2">请假原因</th>
+      <th class="px-4 py-2">状态</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="leaveApplication : ${leaveApplications}">
+      <td class="border px-4 py-2" th:text="${#temporals.format(leaveApplication.startDate, 'yyyy-MM-dd')}"></td>
+      <td class="border px-4 py-2" th:text="${#temporals.format(leaveApplication.endDate, 'yyyy-MM-dd')}"></td>
+      <td class="border px-4 py-2" th:text="${leaveApplication.reason}"></td>
+      <td class="border px-4 py-2" th:text="${leaveApplication.status.name() == 'PENDING' ? '待审核' : (leaveApplication.status.name() == 'APPROVED' ? '批准' : '拒绝')}"></td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="text-center mt-4">
+    <a href="/student/dashboard" class="text-blue-500 hover:underline">返回学生主页</a>
+  </div>
+</div>
 </body>
 </html>
