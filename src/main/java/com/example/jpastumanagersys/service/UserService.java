@@ -52,4 +52,7 @@ public interface UserService extends UserDetailsService {
 
     // 根据角色过滤用户列表
     List<User> filterUsersByRole(List<User> users, String role);
+
+    // 判断教师是否有授课
+    boolean hasTeachingCourses(String userCode);
 }

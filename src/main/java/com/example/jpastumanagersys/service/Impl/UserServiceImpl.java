@@ -290,4 +290,11 @@ public class UserServiceImpl implements UserService {
                 .filter(user -> role.equals(user.getRole()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public boolean hasTeachingCourses(String userCode) {
+        User teacher = getByUserCode(userCode);
+        List<Course> courses = courseRepo.findByTeacher(teacher);
+        return !courses.isEmpty();
+    }
 }

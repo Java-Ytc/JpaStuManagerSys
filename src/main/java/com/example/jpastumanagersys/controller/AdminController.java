@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -207,7 +208,12 @@ public class AdminController {
             // 查询所有教师
             teacherPage = userService.getTeachersByCondition(null, null, null, PageRequest.of(page, size));
         }
+        List<Boolean> hasTeachingList = new ArrayList<>();
+        for (User teacher : teacherPage.getContent()) {
+            hasTeachingList.add(userService.hasTeachingCourses(teacher.getUserCode()));
+        }
         model.addAttribute("teachers", teacherPage.getContent());
+        model.addAttribute("hasTeachingList", hasTeachingList);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", teacherPage.getTotalPages());
         // 检查是否有教师数据
@@ -283,8 +289,24 @@ public class AdminController {
      * @return 重定向的 URL
      */
     @PostMapping("/teachers/delete")
-    public String deleteTeachers(@RequestParam List<String> userCodes) {
-        userService.deleteTeachersByUserCodes(userCodes); // 这里复用删除学生的方法，因为逻辑相同
+    public String deleteTeachers(@RequestParam List<String> userCodes, Model model) {
+        List<String> teachersWithCourses = new ArrayList<>();
+        for (String userCode : userCodes) {
+            if (userService.hasTeachingCourses(userCode)) {
+                User teacher = userService.getByUserCode(userCode);
+                teachersWithCourses.add(teacher.getUsername());
+            }
+        }
+        if (!teachersWithCourses.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder("当前教师 ");
+            for (String teacherName : teachersWithCourses) {
+                errorMessage.append(teacherName).append(" ");
+            }
+            errorMessage.append("有授课，请先解除授课");
+            model.addAttribute("deleteError", errorMessage.toString());
+            return listTeachers(null, null, 0, 10, model);
+        }
+        userService.deleteTeachersByUserCodes(userCodes);
         return "redirect:/admin/teachers";
     }
 
@@ -782,11 +804,10 @@ public class AdminController {
      *
      * @param selectionId 选课记录 ID
      * @param score       分数
-     * @param model       用于传递数据到视图的模型对象
      * @return 重定向的 URL
      */
     @PostMapping("/scores/save")
-    public String saveScore(@RequestParam Long selectionId, @RequestParam Double score, Model model) {
+    public String saveScore(@RequestParam Long selectionId, @RequestParam Double score) {
         CourseSelection selection = selectionService.getById(selectionId);
         User student = selection.getStudent();
         Course course = selection.getCourse();

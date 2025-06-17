@@ -41,16 +41,17 @@
                     <th class="py-3 px-6 border-b">用户名</th>
                     <th class="py-3 px-6 border-b">邮箱</th>
                     <th class="py-3 px-6 border-b">电话</th>
+                    <th class="py-3 px-6 border-b">是否有授课</th>
                     <th class="py-3 px-6 border-b">操作</th>
                 </tr>
                 </thead>
                 <tbody>
                 <!-- 检查是否有教师数据 -->
                 <tr th:if="${noTeachersMessage}">
-                    <td colspan="6" class="py-3 px-6 border-b text-center" th:text="${noTeachersMessage}"></td>
+                    <td colspan="7" class="py-3 px-6 border-b text-center" th:text="${noTeachersMessage}"></td>
                 </tr>
                 <!-- 遍历教师列表，为每一个教师数据生成一行表格数据 -->
-                <tr th:each="teacher : ${teachers}" class="hover:bg-gray-100">
+                <tr th:each="teacher, stat : ${teachers}" class="hover:bg-gray-100">
                     <!-- 选中教师数据中的 userCode 作为删除时的参数传递到 AdminController -->
                     <td class="py-3 px-6 border-b">
                         <label th:for="${'checkbox_' + teacher.userCode}" class="mr-2">选择</label>
@@ -60,6 +61,7 @@
                     <td class="py-3 px-6 border-b" th:text="${teacher.username}"></td>
                     <td class="py-3 px-6 border-b" th:text="${teacher.email}"></td>
                     <td class="py-3 px-6 border-b" th:text="${teacher.phone}"></td>
+                    <td class="py-3 px-6 border-b" th:text="${hasTeachingList[stat.index] ? '是' : '否'}"></td>
                     <td class="py-3 px-6 border-b">
                         <a th:href="@{/admin/teachers/edit/{userCode}(userCode=${teacher.userCode})}" class="text-blue-500 hover:text-blue-600 mr-2">编辑</a>
                         <a th:href="@{/admin/teachers/detail/{userCode}(userCode=${teacher.userCode})}" class="text-green-500 hover:text-green-600">详细</a>
@@ -67,6 +69,10 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <!-- 删除错误提示 -->
+        <div th:if="${deleteError}" class="mt-6 text-red-500">
+            <p th:text="${deleteError}"></p>
         </div>
         <div class="mt-6">
             <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">删除教师</button>
